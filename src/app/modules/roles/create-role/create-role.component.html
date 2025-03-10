@@ -1,0 +1,189 @@
+<div class="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0">
+  <div
+    class="relative py-5 text-left transition-all transform rounded-lg px-7 sm:w-full sm:max-w-lg md:max-w-5xl sm:px-11 sm:py-7"
+  >
+    <div>
+      <h1 class="absolute top-0 left-0 text-lg font-medium pt-7 pl-11">{{ 'newRole' | translate }}</h1>
+      <div class="absolute top-0 right-0 pt-7 pr-11 sm:block">
+        <button
+          type="button"
+          mat-dialog-close
+          class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        >
+          <span class="sr-only">{{'appClose' | translate}}</span>
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="w-full mt-10">
+      <div class="flex w-full border-gray-300">
+        <div class="ml-0 overflow-hidden text-left transition-all transform rounded-lg sm:w-full">
+          <div class="flex mt-0">
+            <form class="w-full" [formGroup]="roleFormGroup" (ngSubmit)="createRole()">
+              <div class="flex mb-5 space-x-4">
+                <div class="w-1/2">
+                  <div class="flex justify-between">
+                    <div class="w-full">
+                      <label for="first-name" class="block text-sm font-medium leading-6 text-gray-600">{{
+                        'names' | translate
+                      }}</label>
+                      <div class="mt-2">
+                        <input
+                          type="text"
+                          placeholder="{{ 'enterNamePlaceholder' | translate }}"
+                          class="block w-full rounded-md border-0 py-1.5 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                          formControlName="roleName"
+                          [class]="
+                            formControls['roleName'].touched && formControls['roleName'].errors
+                              ? 'form-control invalid-feedback'
+                              : 'form-control'
+                          "
+                        />
+                      </div>
+                      <app-error-message [control]="formControls['roleName']" fieldName="Name"> </app-error-message>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-1/2">
+                  <div class="flex justify-between">
+                    <div class="w-full">
+                      <label for="first-name" class="block text-sm font-medium leading-6 text-gray-600">{{
+                        'description' | translate
+                      }}</label>
+                      <div class="mt-2">
+                        <input
+                          type="text"
+                          placeholder="{{ 'enterDescriptionPlaceholder' | translate }}"
+                          class="block w-full rounded-md border-0 py-1.5 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                          formControlName="description"
+                          [class]="
+                            formControls['description'].touched && formControls['description'].errors
+                              ? 'form-control invalid-feedback'
+                              : 'form-control'
+                          "
+                        />
+                      </div>
+                      <app-error-message [control]="formControls['description']" fieldName="Description">
+                      </app-error-message>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex space-x-4">
+                <div class="w-1/2 mb-5">
+                  <label for="date of birth" class="block text-sm font-medium leading-6 text-gray-600">{{
+                    'validityPeriod' | translate
+                  }}</label>
+                  <div class="mt-0">
+                    <input
+                      required
+                      type="date"
+                      name="date"
+                      [min]="today"
+                      formControlName="validityPeriod"
+                      class="form-input block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                      placeholder="validity Period"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-root">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                  <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
+                      <table class="min-w-full bg-white border-2 divide-y divide-gray-300">
+                        <thead class="border-2 bg-gray-50">
+                          <tr>
+                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                              {{ 'capabilities' | translate }}
+                            </th>
+
+                            <th
+                              *ngFor="let item of permTypes"
+                              scope="col"
+                              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              <div class="relative flex items-start">
+                                <div class="flex items-center h-6">
+                                  <input
+                                    (change)="selectColumnPermission($event)"
+                                    [value]="item.value"
+                                    type="checkbox"
+                                    class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-0"
+                                  />
+                                </div>
+                                <div class="ml-3 text-sm leading-6">
+                                  <label [for]="item.name" class="font-medium text-gray-900">{{
+                                    item.name | lowercase | translate
+                                  }}</label>
+                                </div>
+                              </div>
+                            </th>
+                            <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                              <span class="sr-only"></span>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                          <tr *ngFor="let permissions of permissionsMatrix; let i = index">
+                            <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap">
+                              {{ titles[i] }}
+                            </td>
+
+                            <td
+                              class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap"
+                              *ngFor="let permission of permissions"
+                            >
+                              <ng-container *ngIf="!!permission">
+                                <input
+                                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-0"
+                                  [checked]="isChecked(permission)"
+                                  type="checkbox"
+                                  [value]="permission"
+                                  (change)="onPermissionChange($event)"
+                                />
+                              </ng-container>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      <app-error-message [control]="permissions.length === 0" fieldName="Description">
+                      </app-error-message>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-end mt-8">
+                <button
+                  mat-dialog-close
+                  class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white flex items-center justify-center font-semibold text-sm mr-10 w-28 h-10"
+                >
+                  {{ 'cancelButton' | translate }}
+                </button>
+                <button
+                  type="submit"
+                  [disabled]="roleFormGroup.invalid"
+                  class="px-4 py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-medium text-sm w-28 h-10"
+                >
+                  {{ 'submitButton' | translate }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

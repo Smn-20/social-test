@@ -1,0 +1,77 @@
+export enum EReturnGroups {
+    HOUSEHOLDS = 'HOUSEHOLDS',
+    HOUSEHOLD_MEMBERS = 'HOUSEHOLD_MEMBERS',
+    HOUSEHOLD_HEADS = 'HOUSEHOLD_HEADS'
+}
+
+export enum EConditionMeets {
+    ALL = 'ALL',
+    AT_LEAST_ONE = 'AT_LEAST_ONE',
+}
+
+export enum ECriteriaApplicationGroup {
+    HOUSEHOLDS = 'HOUSEHOLDS',
+    HOUSEHOLD_HEADS = 'HOUSEHOLD_HEADS',
+    HOUSEHOLD_MEMBERS = 'HOUSEHOLD_MEMBERS'
+}
+
+export enum EConditionCategory {
+    AGE = 'AGE',
+    GENDER = 'GENDER',
+    WORKING_ELIBILITY = 'WORKING_ELIBILITY',
+    DISABILITY_LEVEL = 'DISABILITY_LEVEL',
+    EDUCATION_LEVEL = 'EDUCATION_LEVEL'
+}
+
+export enum EValueOperations {
+    EQUAL = 'EQUAL',
+    NOT_EQUAL = 'NOT_EQUAL',
+    GREATER_THAN = 'GREATER_THAN',
+    GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
+    LESS_THAN = 'LESS_THAN',
+    LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
+    IN = 'IN',
+    NOT_IN = 'NOT_IN',
+    ALL = 'ALL',
+    IN_RANGE = 'IN_RANGE',
+    NOT_IN_RANGE = 'NOT_IN_RANGE'
+}
+
+export enum EConditionQuestionType {
+    RADIO_GROUP = 'RADIO_GROUP',
+    CHECKBOX = 'CHECKBOX',
+    DROPDOWN = 'DROPDOWN',
+    TEXT = 'TEXT',
+    FILE = 'FILE',
+    RATING = 'RATING',
+    BOOLEAN = 'BOOLEAN',
+    TAG_BOX = 'TAG_BOX',
+    IMAGE_PICKER = 'IMAGE_PICKER',
+    RANKING = 'RANKING',
+    PANEL_DYNAMIC = 'PANEL_PYNAMIC',
+    MATRIX = 'MATRIX',
+    MATRIX_DROPDOWN = 'MATRIX_DROPDOWN',
+    MATRIX_DYNAMIC = 'MATRIX_DYNAMIC',
+    MULTIPLE_TEXT = 'MULTIPLE_TEXT'
+}
+
+export enum EConditionInputType {
+    EMAIL = 'EMAIL',
+    COLOR = 'COLOR',
+    DATE = 'DATE',
+    DATE_TIME_LOCAL = 'DATE_TIME_LOCAL',
+    TEXT = 'TEXT',
+    PASSWORD = 'PASSWORD',
+    URL = 'URL',
+    NUMBER = 'NUMBER',
+    RANGE = 'RANGE',
+    TEL = 'TEL',
+    TIME = 'TIME',
+    WEEK = 'WEEK'
+}
+
+export enum EBeneficiaryHelpStatus {
+    NOT_HELPED = 'NOT_HELPED',
+    HELPED = 'HELPED',
+    MIXED = 'MIXED'
+}

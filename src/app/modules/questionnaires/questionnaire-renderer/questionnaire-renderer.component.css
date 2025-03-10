@@ -1,0 +1,3 @@
+:host ::ng-deep .sd-progress-buttons__page-title[title="all"] {
+    display: none !important;
+}

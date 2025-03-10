@@ -1,0 +1,108 @@
+<div class="flex flex-col" *ngIf="!loading && questionnaires.length > 0">
+  <div class="flex justify-between items-center mb-6 flex-col md:flex-row">
+    <div class="">
+      <span class="font-medium">{{ 'questionnaires' | translate }}</span>
+    </div>
+    <div class="flex space-x-4 mt-4 md:mt-0" appAccessControl [permissions]="[EPermission.CREATE_QUESTIONNAIRE]">
+      <button
+        class="px-4 py-2.5 text-gray-500 rounded-lg flex items-center font-medium text-sm border bg-white"
+        (click)="toggleNewQuestionnaireModal()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-download-cloud"
+        >
+          <polyline points="8 17 12 21 16 17"></polyline>
+          <line x1="12" y1="12" x2="12" y2="21"></line>
+          <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
+        </svg>
+        <span class="px-2">{{ 'newQuestionnaire' | translate }}</span>
+      </button>
+
+      <button
+        [routerLink]="'/admin/questionnaires/generate/json'"
+        class="h-[44px] px-4 mx-2 py-2.5 text-white rounded-lg bg-primary flex items-center font-medium text-sm"
+      >
+        {{ 'generateJson' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <ng-container *ngFor="let q of questionnaires">
+      <app-questionnaire-card
+        [q]="q"
+        [editable]="q.status === 'ACTIVE' || q.status === 'ARCHIVED'"
+        (actionEvent)="onActionEvent($event)"
+      ></app-questionnaire-card>
+    </ng-container>
+  </div>
+</div>
+
+<ng-container *ngIf="!loading && questionnaires.length === 0">
+  <div class="flex justify-center items-center mt-20">
+    <div class="bg-white px-8 pt-6 pb-8 mb-4 w-3/4">
+      <div class="text-left mb-8">
+        <p class="font-semibold text-primary text-sm">{{ 'noQuestionnaire' | translate }}</p>
+        <h1 class="text-black font-bold text-4xl my-4">{{ 'noQuestionnaireFound' | translate }}</h1>
+        <p class="my-4">
+          {{ 'generateQuestionnaireOnSurveyJS' | translate }}
+        </p>
+      </div>
+      <div class="flex" appAccessControl [permissions]="[EPermission.CREATE_QUESTIONNAIRE]">
+        <button
+          class="h-[44px] px-4 py-2.5 text-primary rounded-lg flex items-center font-medium text-sm border border-primary"
+          (click)="toggleNewQuestionnaireModal()"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="feather feather-download-cloud"
+          >
+            <polyline points="8 17 12 21 16 17"></polyline>
+            <line x1="12" y1="12" x2="12" y2="21"></line>
+            <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
+          </svg>
+          <span class="px-2">{{ 'newQuestionnaire' | translate }}</span>
+        </button>
+
+        <button
+          class="h-[44px] px-4 mx-2 py-2.5 text-white rounded-lg bg-primary flex items-center font-medium text-sm"
+          routerLink="/admin/library"
+        >
+          {{ 'generateJson' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="loading">
+  <div class="flex justify-end gap-4 mb-4">
+    <p class="leading-relaxed md:h-[34px] w-[100px] 2xl:h-[44px] animate-pulse duration-500 bg-gray-200 rounded-md"></p>
+    <p class="leading-relaxed md:h-[34px] w-[100px] 2xl:h-[44px] animate-pulse duration-500 bg-gray-200 rounded-md"></p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <ng-container *ngFor="let ar of loadingArray">
+      <div class="relative w-full rounded-md shadow-sm">
+        <p class="leading-relaxed md:h-[228px] w-full animate-pulse duration-500 bg-gray-200 rounded-md"></p>
+      </div>
+    </ng-container>
+  </div>
+</ng-container>

@@ -1,0 +1,132 @@
+<div
+  class="fixed lg:inset-y-0 lg:z-50 lg:flex lg:flex-col transition-width duration-300"
+  [ngClass]="sidebarOpenMobile ? 'fixed z-50 left-0 right-0 top-[4rem]' : !sideBarOpen ? 'lg:w-25' : 'lg:w-72'"
+>
+  <div
+    class="flex flex-col grow gap-y-5 bg-primary"
+    [ngClass]="sidebarOpenMobile ? 'w-full  border-primary border-b' : 'px-6'"
+  >
+    <nav
+      class="lg:flex flex-col flex-1 mt-0 lg:mt-8"
+      [ngClass]="{
+        'sticky bg- top-[8rem] left-0 right-0 p-4 bg-primary': sidebarOpenMobile,
+        hidden: !sidebarOpenMobile
+      }"
+    >
+      <div
+        role="list"
+        class="flex flex-col flex-1 gap-y-10"
+        [ngClass]="{ 'items-center': !sideBarOpen && !sidebarOpenMobile }"
+      >
+        <div class="items-center hidden sm:flex" [ngClass]="{ 'px-4': sideBarOpen }">
+          <i-feather
+            name="align-justify"
+            class="w-6 h-6 shrink-0 cursor-pointer text-white"
+            (click)="toggleSideBarOpen()"
+          ></i-feather>
+        </div>
+        <div class="flex flex-col relative">
+          <div class="relative pointer-cursor flex items-center" *ngFor="let item of navigation; let i = index">
+            <div [appHoverMenu]="sideBarOpen && !item.children" (sidebarSizeEvent)="onSidebarSizeEvent($event)">
+              <a
+                (click)="hideMenu(i, !item.current, !!item.children); $event.stopPropagation()"
+                appAccessControl
+                [permissions]="item.permissions || []"
+                [routerLink]="item.link"
+                [ngClass]="{
+                  'gap-x-4': sideBarOpen || sidebarOpenMobile,
+                  'text-white': !item.current
+                }"
+                class="flex w-fit items-center justify-center group mb-2"
+              >
+                <div
+                  class="p-4 rounded-md group-hover:bg-white relative"
+                  [ngClass]="{ 'bg-white text-active-blue': item.current }"
+                >
+                  <i-feather
+                    [name]="item.icon"
+                    class="w-6 h-auto shrink-0 m-0 -mb-2 group-hover:text-active-blue"
+                    [ngClass]="{
+                      'text-active-blue': item.current,
+                      'text-white': !item.current
+                    }"
+                  ></i-feather>
+                  <ng-container
+                    *ngIf="
+                      (item.haveCounter && item.name === 'Requests' && transferCounts + archiveCounts > 0) ||
+                      (item.name === 'Appeals' && appealsCounts > 0) ||
+                      (item.name === 'Translations' && translationCounts > 0)
+                    "
+                  >
+                    <div class="w-1 h-1 absolute top-4 right-2 bg-notification-red rounded-full"></div>
+                  </ng-container>
+                </div>
+                <ng-container *ngIf="sideBarOpen || sidebarOpenMobile"
+                  ><div class="text-white leading-6">{{ item.name }}</div>
+                </ng-container>
+                <div
+                  *ngIf="!item.children"
+                  class="menu-content p-4 z-60 shadow flex flex-cols font-normal w-full"
+                  [ngClass]="{ 'justify-center items-center': !item.children }"
+                >
+                  {{ item.name }}
+                </div>
+                <div
+                  *ngIf="item.children"
+                  class="menu-content-children p-4 py-6 z-60 shadow flex flex-cols font-normal w-full"
+                  [style]="{ '--top': dynamicValue, height: (item.children.length * 54).toString() + 'px !important' }"
+                >
+                  <ul class="flex flex-col space-y-3 w-full">
+                    <li
+                      class="flex justify-between"
+                      *ngFor="let subItem of item.children; let j = index"
+                      appAccessControl
+                      [permissions]="subItem.permissions || []"
+                    >
+                      <a
+                        (click)="hideMenu(i, !subItem.current, false, j); $event.stopPropagation()"
+                        appAccessControl
+                        [permissions]="subItem.permissions || []"
+                        [routerLink]="subItem.link"
+                        [ngClass]="{
+                          'text-active-blue': subItem.current,
+                          'text-gray-lang': !subItem.current
+                        }"
+                        class="flex w-full justify-between text-sm leading-6 group hover:text-active-blue"
+                      >
+                        <div class="relative" [ngClass]="{ 'flex gap-2 items-center': subItem.isNew }">
+                          <span> {{ subItem.name }}</span>
+
+                          <div
+                            class="bg-primary text-xs py-1 px-2 rounded-lg flex text-white gap-2 items-center"
+                            *ngIf="subItem.isNew"
+                          >
+                            <span>{{ 'textNew' | translate }}</span>
+                          </div>
+
+                          <ng-container
+                            *ngIf="
+                              (item.haveCounter && subItem.name === 'Transfers' && transferCounts > 0) ||
+                              (subItem.name === 'Archives' && archiveCounts > 0) ||
+                              (subItem.name === 'Pending' && appealsCounts > 0)
+                            "
+                          >
+                            <div class="w-1 h-1 absolute top-0 -right-2 bg-notification-red rounded-full"></div>
+                          </ng-container>
+                        </div>
+                        <i-feather
+                          [name]="'chevron-down'"
+                          class="text-gray-lang pl-2 w-6 mt-[6px] h-6 shrink-0"
+                        ></i-feather>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>

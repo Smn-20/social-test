@@ -1,0 +1,70 @@
+{
+  "status": true,
+  "response": {
+    "location": {
+      "villageName": "Kabirizi",
+      "cellName": "Mbare",
+      "sectorName": "Karangazi",
+      "districtName": "Nyagatare",
+      "provinceName": "East"
+    },
+    "members": [
+      {
+        "id": "89b6ee01-0359-431b-9e17-d6dc8d464662",
+        "firstName": "Delephine ",
+        "lastName": "Irizerimbuto",
+        "identificationType": "NONE",
+        "dateOfBirth": "2013-03-05",
+        "gender": "FEMALE",
+        "civilStatus": "SINGLE",
+        "membershipType": "CHILD",
+        "fullName": "Delephine  Irizerimbuto"
+      },
+      {
+        "id": "7094d4c7-c963-49f1-a31a-482cb090e9ed",
+        "firstName": "Seraphine ",
+        "lastName": "Mukeshimana",
+        "identificationType": "NONE",
+        "dateOfBirth": "1984-03-05",
+        "gender": "FEMALE",
+        "civilStatus": "MARRIED",
+        "membershipType": "SPOUSE",
+        "fullName": "Seraphine  Mukeshimana"
+      },
+      {
+        "id": "27890bc3-8147-4d5e-a931-7cab2052c9f2",
+        "firstName": "Jonathan ",
+        "lastName": "Irumva",
+        "identificationType": "NONE",
+        "dateOfBirth": "2002-03-05",
+        "gender": "MALE",
+        "civilStatus": "SINGLE",
+        "membershipType": "CHILD",
+        "fullName": "Jonathan  Irumva"
+      },
+      {
+        "id": "511f3f76-b4ea-4937-962e-46c13998486c",
+        "firstName": "Donacienne ",
+        "lastName": "Hogoza",
+        "identificationType": "NONE",
+        "dateOfBirth": "2016-03-05",
+        "gender": "FEMALE",
+        "civilStatus": "SINGLE",
+        "membershipType": "CHILD",
+        "fullName": "Donacienne  Hogoza"
+      },
+      {
+        "id": "4a60f5ae-75aa-46e6-9bfb-e7ba57f998dd",
+        "firstName": "Samuel ",
+        "lastName": "Irakoze",
+        "identificationType": "NONE",
+        "dateOfBirth": "2007-03-05",
+        "gender": "MALE",
+        "civilStatus": "SINGLE",
+        "membershipType": "CHILD",
+        "fullName": "Samuel  Irakoze"
+      }
+    ]
+  },
+  "message": "success.message"
+}

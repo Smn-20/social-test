@@ -1,0 +1,143 @@
+<div class="flex flex-col space-y-8" *ngIf="!loading">
+  <div class="flex flex-row justify-between items-center mb-4">
+    <h3 class="text-lg font-semibold text-gray-900">{{'dashboards' | translate}}</h3>
+    <button
+      appAccessControl
+      [permissions]="[EPermission.CREATE_DASHBOARD, EPermission.CREATE_DASHBOARD_TYPE]"
+      class="px-4 py-2.5 text-white rounded-lg bg-primary h-10 flex items-center font-semibold text-sm mt-4 md:mt-0"
+      (click)="openCreateDashboardDialog()"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="#FFFFFF"
+        class="w-5 h-5 mr-3"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      {{ 'createDashboard' | translate }}
+    </button>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <ng-container *ngFor="let dashboard of dashboards; let i = index">
+      <div class="flex-col space-y-3 bg-white rounded-lg shadow p-6">
+        <div class="flex space-x-3 justify-between">
+          <dt class="text-sm font-medium text-gray-500 truncate">
+            {{ dashboard.title | removeUnderscore | titlecase }}
+          </dt>
+          <a
+            [matTooltip]="'deleteDashboard' | translate"
+            appAccessControl
+            [permissions]="[EPermission.DELETE_DASHBOARD_TYPE]"
+            class="pointer-cursor"
+            (click)="action(dashboard.title, 'delete')"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-6 h-6 mr-2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+              />
+            </svg>
+          </a>
+        </div>
+
+        <div class="flex space-x-30 space-x-reverse items-center">
+          <dd class="text-xl font-semibold tracking-tight text-gray-900">
+            {{ dashboard.component.type | removeUnderscore | titlecase }}
+          </dd>
+          <button
+            class="ml-auto px-2 py-1 text-white rounded-lg"
+            [ngClass]="{
+              'bg-primary ': dashboard.status === 'INACTIVE',
+              'bg-red-400': dashboard.status === 'ACTIVE'
+            }"
+            (click)="changeDashboardStatus(dashboard.title, dashboard.status)"
+          >
+            {{ dashboard.status === 'ACTIVE' ? ('textHide' | translate) : ('textShow' | translate) }}
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true" *ngIf="openConfirmModal">
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+      <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div
+          class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:p-6 space-y-10"
+        >
+          <div>
+            <div class="absolute top-0 right-0 pt-4 pr-4 sm:block">
+              <button
+                type="button"
+                class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#058ccc] focus:ring-offset-2"
+                (click)="close()"
+              >
+                <span class="sr-only">Close</span>
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="text-gray-600 text-lg">Are you sure you want to delete this dashboard?</div>
+          <div class="flex justify-end space-x-6">
+            <button
+              class="px-4 py-2.5 rounded-lg bg-white text-gray-600 border border-gray-300 flex items-center justify-center font-semibold text-sm h-10"
+              (click)="close()"
+            >
+              {{ 'cancelButton' | translate }}
+            </button>
+            <button
+              [disabled]="actionLoading"
+              class="px-4 w-auto py-2.5 rounded-lg bg-[#058ccc] text-white flex items-center justify-center font-semibold text-sm h-10"
+              (click)="changeDashboardStatus(dashboardTitle, 'DELETED')"
+            >
+              <ng-container *ngIf="confirmAction === 'enable'">
+                {{ actionLoading ? ('enabling' | translate) : ('enable' | translate) }}
+              </ng-container>
+              <ng-container *ngIf="confirmAction === 'disable'">
+                {{ actionLoading ? ('disabling' | translate) : ('disable' | translate) }}
+              </ng-container>
+              <ng-container *ngIf="confirmAction === 'delete'">
+                {{ actionLoading ? ('deleting' | translate) : ('delete' | translate) }}
+              </ng-container>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="loading">
+  <div class="flex justify-between gap-4 mb-4">
+    <p class="leading-relaxed md:h-[34px] w-[100px] 2xl:h-[44px] animate-pulse duration-500 bg-gray-200 rounded-md"></p>
+    <p class="leading-relaxed md:h-[34px] w-[100px] 2xl:h-[44px] animate-pulse duration-500 bg-gray-200 rounded-md"></p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <ng-container *ngFor="let ar of loadingArray">
+      <div class="relative w-full rounded-md shadow-sm">
+        <p class="leading-relaxed md:h-[116px] w-full animate-pulse duration-500 bg-gray-200 rounded-md"></p>
+      </div>
+    </ng-container>
+  </div>
+</ng-container>

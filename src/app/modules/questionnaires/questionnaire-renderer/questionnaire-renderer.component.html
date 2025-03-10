@@ -1,0 +1,13 @@
+<ng-container *ngIf="!loading">
+  <survey [model]="surveyModel"></survey>
+</ng-container>
+
+<ng-container *ngIf="loading">
+  <app-table-shimmer
+    [showHeader]="false"
+    [searchSkeleton]="false"
+    [buttonNumber]="0"
+    [cols]="3"
+    [rows]="14"
+  ></app-table-shimmer>
+</ng-container>

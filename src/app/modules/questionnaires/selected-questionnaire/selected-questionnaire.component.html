@@ -1,0 +1,335 @@
+<div class="flex flex-col">
+  <div class="flex items-center space-x-3 mb-5">
+    <div class="text-gray-500">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="feather feather-arrow-left cursor-pointer"
+        routerLink="/admin/questionnaires/qs"
+      >
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </div>
+    <h3 class="text-lg font-semibold">{{ 'householdQuestionnaire' | translate }}</h3>
+  </div>
+  <div class="flex space-x-3 mb-6">
+    <div class="w-1/2" *ngIf="selectedQuestionnaire">
+      <app-questionnaire-card
+        [showTriggerScoreOnActive]="true"
+        [editable]="false"
+        [isTriggering]="triggering"
+        (actionEvent)="receiveAction($event)"
+        [q]="selectedQuestionnaire"
+      ></app-questionnaire-card>
+    </div>
+    <div class="w-1/2 mt-auto">
+      <form>
+        <div class="relative w-full mt-2 rounded-md shadow-sm">
+          <ng-select
+            placeholder="{{ 'selectSectionPlaceholder' | translate }}"
+            [items]="sections"
+            (change)="getQuestionsByRespondentSection($event)"
+            bindLabel="name"
+            [clearable]="false"
+            [appendTo]="'body'"
+            bindValue="value"
+          ></ng-select>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg" *ngIf="!loading && questions?.length > 0">
+    <div class="px-6 py-5 sm:flex sm:items-center bg-white">
+      <div class="flex">
+        <h1 class="mr-3 text-lg font-semibold leading-6 text-gray-900">{{ 'questions' | translate }}</h1>
+        <div class="inline-flex items-center justify-center px-2 bg-sky-100 rounded-2xl">
+          <span class="text-xs font-medium text-primary">
+            {{ questions?.length }} {{ 'questions' | translate }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
+            <table class="min-w-full bg-white divide-y divide-gray-300">
+              <thead class="bg-white">
+                <tr>
+                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                    {{ 'questionCode' | translate }}
+                  </th>
+                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                    {{ 'questions' | translate }}
+                  </th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {{ 'possibleAnswers' | translate }}
+                  </th>
+                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                    <span class="sr-only"></span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <ng-container *ngFor="let question of questions; let i = index">
+                  <tr class="cursor-pointer" (click)="toggleQuestionDetails(i, question)">
+                    <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">{{ question.code }}</td>
+                    <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">{{ question.criteriaName }}</td>
+                    <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                      {{ question.answers?.length || 0 }}
+                    </td>
+                    <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                      <ng-container *ngIf="!openQuestionDetails || i !== selectedRowIndex">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class="w-5 h-5"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                      </ng-container>
+                      <ng-container *ngIf="openQuestionDetails && i === selectedRowIndex">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class="w-5 h-5"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                        </svg>
+                      </ng-container>
+                    </td>
+                  </tr>
+                  <tr *ngIf="openQuestionDetails && i === selectedRowIndex">
+                    <td colspan="4" class="p-5">
+                      <div
+                        class="flex p-4 items-center justify-between mb-6 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:mt-0"
+                      >
+                        <div class="flex flex-col w-full space-y-1">
+                          <ng-container *ngIf="!isDiplayValueEditing">
+                            <label class="block text-sm leading-6 text-gray-500"> {{'displayValue' | translate}}</label>
+                            <span class="block text-base font-medium leading-6 text-gray-600">{{
+                              question.criteriaName
+                            }}</span>
+                          </ng-container>
+                          <div class="flex w-full" *ngIf="isDiplayValueEditing">
+                            <input
+                              type="text"
+                              [(ngModel)]="question.criteriaName"
+                              (ngModelChange)="onDisplayValueChange($event)"
+                              class="block w-full rounded-md border-0 p-4 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                        </div>
+
+                        <div class="flex w-full justify-end">
+                          <button
+                            type="button"
+                            class="relative inline-flex flex-shrink-0 h-6 transition-colors duration-200 ease-in-out bg-gray-200 border-2 border-transparent rounded-full cursor-pointer w-11 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                            [ngClass]="{
+                              'bg-primary': isDiplayValueEditing
+                            }"
+                            role="switch"
+                            aria-checked="false"
+                            (click)="toggleIsDiplayValueEditing()"
+                          >
+                            <span
+                              aria-hidden="true"
+                              class="inline-block w-5 h-5 transition duration-200 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none ring-0"
+                              [ngClass]="{
+                                'translate-x-5': isDiplayValueEditing
+                              }"
+                            ></span>
+                          </button>
+                          <span class="ml-3 text-base text-gray-600"> {{ 'editMode' | translate }} </span>
+                        </div>
+                      </div>
+                      <div
+                        *ngIf="!question.answers || question.answers?.length === 0"
+                        class="flex flex-col mt-6 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg h-44 w-[280px] md:mt-0 mb-3"
+                      >
+                        <div
+                          class="flex items-center w-full px-4 py-4 bg-white border-b border-gray-200 rounded-t-lg sm:px-3"
+                        >
+                          <div class="bg-sky-100 p-1 mr-3.5 rounded-full">
+                            <div class="p-1 bg-sky-200 rounded-full">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="w-4 h-4 text-primary"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                          <p class="text-base font-semibold leading-6 text-gray-600">
+                            {{ 'possibleAnswers' | translate }}
+                          </p>
+                        </div>
+                        <div class="px-4 py-4">
+                          <h3 class="text-gray-600 text-4xl my-4">{{ 'notApplicable' | translate }}</h3>
+                        </div>
+                      </div>
+                      <div
+                        *ngIf="question.answers?.length > 0"
+                        class="flex flex-col mt-6 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:mt-0"
+                      >
+                        <div
+                          class="flex items-center w-fit px-4 py-4 bg-white border-b border-gray-200 rounded-t-lg sm:px-3"
+                        >
+                          <div class="bg-sky-100 p-1 mr-3.5 rounded-full">
+                            <div class="p-1 bg-sky-200 rounded-full">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="w-4 h-4 text-primary"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                          <p class="text-base font-semibold leading-6 text-gray-600">
+                            {{ 'possibleAnswers' | translate }}
+                          </p>
+                        </div>
+                        <div class="px-4 py-4">
+                          <ng-container *ngFor="let an of question.answers; let i = index">
+                            <div class="flex items-center justify-between mb-2">
+                              <div class="bg-gray-100 p-3 rounded-2xl" *ngIf="!editableAnswers[i]?.edit">
+                                <span class="mr-1.5">{{ an?.answer }}:</span>
+                                <span class="mr-1.5 ml-1.5"> {{ an?.coefficient }} coeff</span>
+                              </div>
+                              <div *ngIf="editableAnswers[i]?.edit">
+                                <label class="block text-sm font-medium leading-6 text-gray-600">{{
+                                  an?.answer
+                                }}</label>
+                                <input
+                                  type="text"
+                                  [value]="editableAnswers[i].value"
+                                  appAllowNumber
+                                  (change)="onValueChange($event, i)"
+                                  class="block w-fit rounded-md border-0 p-4 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                                />
+                              </div>
+                              <div>
+                                <div class="flex justify-end mb-5">
+                                  <div class="flex items-center">
+                                    <button
+                                      type="button"
+                                      class="relative inline-flex flex-shrink-0 h-6 transition-colors duration-200 ease-in-out bg-gray-200 border-2 border-transparent rounded-full cursor-pointer w-11 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                                      [ngClass]="{
+                                        'bg-primary': editableAnswers[i].edit
+                                      }"
+                                      role="switch"
+                                      aria-checked="false"
+                                      (click)="toggleEditQuestionnaireForm(i, an)"
+                                    >
+                                      <span
+                                        aria-hidden="true"
+                                        class="inline-block w-5 h-5 transition duration-200 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none ring-0"
+                                        [ngClass]="{
+                                          'translate-x-5': editableAnswers[i].edit
+                                        }"
+                                      ></span>
+                                    </button>
+                                    <span class="ml-3 text-base text-gray-600"> {{ 'editMode' | translate }} </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+                        </div>
+                        <!-- Edit Questionnaire Form Start -->
+                        <div
+                          class="w-full p-4"
+                          *ngIf="openEditQuestionnaireForm || isDiplayValueEditing || updatedCriteriaValue"
+                        >
+                          <div class="flex w-full justify-end mt-8">
+                            <button
+                              [disabled]="updatting"
+                              class="px-4 py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-medium text-sm w-28 h-10"
+                              (click)="updateCoefficient(question)"
+                            >
+                              <ng-container *ngIf="updatting">
+                                <ng-container [ngTemplateOutlet]="spinner"> </ng-container>
+                              </ng-container>
+                              {{ updatting ? 'Updatting...' : 'Update' }}
+                            </button>
+                          </div>
+                        </div>
+                        <!--Finish edit form -->
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="!loading && questions?.length === 0">
+  <div class="flex items-center justify-center w-full mt-4">
+    <div class="w-[800px]">
+      <app-not-found
+        [keyword]="'Questions'"
+        [overrideMessage]="'Kindly filter from section dropdown above to get questions'"
+        (refreshEvent)="receiveRefresh($event)"
+      ></app-not-found>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="loading">
+  <app-table-shimmer [searchSkeleton]="false" [buttonNumber]="0" [cols]="3" [rows]="6"></app-table-shimmer>
+</ng-container>
+
+<ng-template #spinner>
+  <svg
+    aria-hidden="true"
+    role="status"
+    class="inline w-4 h-4 mr-3 text-white animate-spin"
+    viewBox="0 0 100 101"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+      fill="#E5E7EB"
+    ></path>
+    <path
+      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+      fill="currentColor"
+    ></path>
+  </svg>
+</ng-template>

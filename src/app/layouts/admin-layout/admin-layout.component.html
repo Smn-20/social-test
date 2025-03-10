@@ -1,0 +1,12 @@
+<div [ngClass]="{ 'overflow-hidden': sidebarOpenMobile }" class="relative">
+  <app-sidenav></app-sidenav>
+  <div [ngClass]="sideBarOpen ? 'lg:pl-72' : 'lg:pl-25'">
+    <app-header></app-header>
+    <app-breadcrumb></app-breadcrumb>
+    <main class="py-3 bg-gray-100">
+      <div class="px-4 mx-auto max-w-8xl sm:px-6 lg:px-8 min-h-screen">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>

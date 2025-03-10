@@ -1,0 +1,186 @@
+<!-- New questionnaire Modal -->
+<div class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+
+  <div class="fixed inset-0 z-30 overflow-y-auto">
+    <div class="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0">
+      <div
+        class="ml-0 overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl sm:w-full sm:max-w-lg md:max-w-xl sm:px-11 sm:py-7"
+      >
+        <div>
+          <h1 class="absolute top-0 left-0 text-lg font-semibold pt-5 pl-11">{{'newQuestionnaire' | translate}}</h1>
+          <div class="absolute top-0 right-0 hidden pt-7 pr-11 sm:block">
+            <button
+              type="button"
+              class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              (click)="close()"
+            >
+              <span class="sr-only">Close</span>
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="flex mt-10">
+          <form class="w-full" [formGroup]="questionnaireForm">
+            <!-- Start create of new questionnaire -->
+            <div class="flex mb-5 space-x-4">
+              <div class="w-full">
+                <div class="flex flex-col justify-between">
+                  <div class="w-full mt-2">
+                    <label for="Select survey" class="block text-sm font-medium leading-6 text-gray-600"
+                      >{{'selectSurvey' | translate}}
+                    </label>
+                    <ng-select
+                      placeholder="{{'selectSurveyPlaceholder' | translate}}"
+                      formControlName="survey"
+                      [items]="surveys"
+                      bindLabel="name"
+                      [clearable]="false"
+                      [appendTo]="'body'"
+                      bindValue="id"
+                      [class]=" 
+                        formControls['survey'].touched && formControls['survey'].errors
+                          ? 'form-control invalid-feedback'
+                          : 'form-control'
+                      "
+                    ></ng-select>
+                    <app-error-message [control]="formControls['survey']" [fieldName]="'survey'"> </app-error-message>
+                  </div>
+                  <div class="w-full mt-2">
+                    <label for="Questionnaire type" class="block text-sm font-medium leading-6 text-gray-600"
+                      >{{'questionnaireType' | translate}}
+                    </label>
+                    <ng-select
+                      placeholder="{{'questionnaireTypePlaceholder' | translate}}"
+                      formControlName="intervieweeType"
+                      [items]="questionnaireTypes"
+                      bindLabel="name"
+                      bindValue="value"
+                      [appendTo]="'body'"
+                      [clearable]="false"
+                      [class]="
+                        formControls['intervieweeType'].touched && formControls['intervieweeType'].errors
+                          ? 'form-control invalid-feedback'
+                          : 'form-control'
+                      "
+                    ></ng-select>
+                    <app-error-message [control]="formControls['intervieweeType']" fieldName="type">
+                    </app-error-message>
+                  </div>
+                  <div class="w-full mt-2">
+                    <label for="Questionnaire JSON file" class="block text-sm font-medium leading-6 text-gray-600"
+                      >{{'questionnaireJsonFile' | translate}}
+                    </label>
+                    <div
+                      *ngIf="!jsonToUpload"
+                      class="flex items-center justify-center h-40 border border-gray-300 rounded-md"
+                    >
+                      <label for="upload-input" class="flex items-center justify-center h-full cursor-pointer">
+                        <div class="flex flex-col items-center justify-center text-gray-500">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="feather feather-download-cloud mb-2"
+                          >
+                            <polyline points="8 17 12 21 16 17"></polyline>
+                            <line x1="12" y1="12" x2="12" y2="21"></line>
+                            <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
+                          </svg>
+                          <span class="text-sm font-medium leading-5 text-gray-700 mb-2">
+                            <span class="text-primary"> {{'clickToUpload' | translate}} </span>{{'orDragAndDrop' | translate}}
+                          </span>
+                          <span>{{'jsonMaxSize' | translate}}</span>
+                        </div>
+                        <input
+                          id="upload-input"
+                          type="file"
+                          (change)="uploadJSON($event)"
+                          accept="application/JSON"
+                          class="sr-only"
+                        />
+                      </label>
+                    </div>
+                    <div *ngIf="jsonToUpload" class="flex justify-between pt-2">
+                      <span class="text-gray-500 text-base">{{'uploadedJsonFile' | translate}}</span>
+                      <a class="cursor-pointer" (click)="$event.stopPropagation(); jsonToUpload = null">
+                        <i-feather class="w-6 h-6 mr-2 text-gray-500" name="trash-2"></i-feather>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end mt-8">
+              <button
+                class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white flex items-center justify-center font-semibold text-sm mr-10 w-28 h-10"
+                (click)="close()"
+              >
+                {{'cancelButton' | translate}}
+              </button>
+              <button
+                [disabled]="questionnaireForm.invalid || isSubmitting"
+                (click)="createQuestionnaire()"
+                class="px-4 py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm w-28 h-10"
+              >
+                <ng-container *ngIf="isSubmitting">
+                  <svg
+                    aria-hidden="true"
+                    role="status"
+                    class="inline w-4 h-4 mr-3 text-white animate-spin"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="#E5E7EB"
+                    ></path>
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentColor"
+                    ></path>
+                  </svg>
+                  {{'submitting' | translate}}
+                </ng-container>
+                <ng-container *ngIf="!isSubmitting"> {{'submitButton' | translate}} </ng-container>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- End of Role modal -->
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="loading">
+  <div class="flex justify-end gap-4 mb-4">
+    <p class="leading-relaxed md:h-[34px] w-[100px] 2xl:h-[44px] animate-pulse bg-gray-100 rounded-md"></p>
+    <p class="leading-relaxed md:h-[34px] w-[100px] 2xl:h-[44px] animate-pulse bg-gray-100 rounded-md"></p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <ng-container *ngFor="let ar of loadingArray">
+      <div class="relative w-full ounded-md shadow-sm">
+        <p class="leading-relaxed mb-3 md:h-[228px] w-full animate-pulse bg-gray-100 rounded-md"></p>
+      </div>
+    </ng-container>
+  </div>
+</ng-container>

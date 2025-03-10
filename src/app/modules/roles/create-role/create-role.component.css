@@ -1,0 +1,12 @@
+/* input[type='checkbox']:checked {
+  content: '';
+  background: transparent !important;
+  border: none !important;
+  border-top: none;
+  border-right: none;
+  z-index: 0 !important;
+} */
+
+.custom-label input:checked + svg {
+  display: block !important;
+}

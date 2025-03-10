@@ -1,0 +1,110 @@
+<div
+  class="w-full h-22 flex items-center justify-between top-0 z-40 bg-white lg:px-8 shadow-sm border-b"
+  [ngClass]="sidebarOpenMobile ? 'fixed' : ''"
+>
+  <div class="hidden lg:flex items-center lg:justify-start shrink-0">
+    <img class="w-auto h-[80px]" src="assets/logos/newLogoHorizontal.png" alt="Logo" />
+  </div>
+  <div
+    class="flex w-full justify-between lg:justify-end h-16 px-4 gap-x-4 sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none"
+    [ngClass]="{ 'bg-primary': sidebarOpenMobile, 'bg-white': !sidebarOpenMobile }"
+  >
+    <button
+      type="button"
+      class="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+      *ngIf="!sidebarOpenMobile"
+      (click)="toggleSidebar()"
+    >
+      <span class="sr-only">Open sidebar</span>
+      <i-feather name="menu" class="w-6 h-6 text-black"></i-feather>
+    </button>
+    <button
+      type="button"
+      class="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+      *ngIf="sidebarOpenMobile"
+      (click)="toggleSidebar()"
+    >
+      <i-feather name="x" class="w-6 h-6 text-black"></i-feather>
+    </button>
+
+    <div class="flex gap-x-4 lg:gap-x-6">
+      <div class="flex items-center gap-x-2 lg:gap-x-4">
+        <div #languageDropdown class="relative dropdown">
+          <button (click)="toggleLanguageDropdown()" class="flex items-center p-2">
+            <div class="flex w-full">
+              <img [src]="'assets/' + getCurrentLanguage + '.png'" alt="" class="w-6 rounded-sm" />
+            </div>
+            <span class="ml-2 leading-6 text-gray-lang hidden lg:flex">
+              {{ selectedLanguage | titlecase }}
+            </span>
+            <i-feather
+              [name]="languageDropdownIsOpen ? 'chevron-up' : 'chevron-down'"
+              class="text-gray-lang pl-2 w-6 mt-[6px] h-6 shrink-0"
+            ></i-feather>
+          </button>
+          <ng-container *ngIf="languageDropdownIsOpen">
+            <div
+              class="absolute z-50 right-0 w-48 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="user-menu-button"
+              tabindex="-1"
+            >
+              <a
+                class="block px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-300"
+                role="menuitem"
+                tabindex="-1"
+                id="user-menu-item-0"
+                *ngFor="let lang of languages"
+                (click)="toggleLanguage(lang.value)"
+                >{{ lang.name }}</a
+              >
+            </div>
+          </ng-container>
+        </div>
+        <div class="border-l h-full"></div>
+        <!-- Profile dropdown -->
+        <div #profileDropdown class="relative dropdown">
+          <button (click)="toggleUserMenu()" class="-m-1.5 flex justify-center space-x-4 items-center p-1.5">
+            <span class="sr-only">Open user menu</span>
+            <span class="hidden lg:flex lg:items-center">
+              <span class="flex flex-col items-end text-sm text-black">
+                <span>{{ user?.firstName }} {{ user?.lastName }}</span>
+                <span class="text-primary">{{ role | titlecase }}</span>
+              </span>
+            </span>
+            <img
+              class="w-10 h-10 rounded-full bg-gray-50"
+              [src]="user?.picture ? getImage(user?.picture) : '../../assets/avatar.svg'"
+              alt=""
+            />
+
+            <i-feather
+              [name]="mobileUserMenu ? 'chevron-up' : 'chevron-down'"
+              class="text-gray-lang pl-2 w-6 mt-[6px] h-6 shrink-0"
+            ></i-feather>
+          </button>
+          <ng-container *ngIf="mobileUserMenu">
+            <div
+              class="absolute right-0 w-48 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="user-menu-button"
+              tabindex="-1"
+            >
+              <a
+                class="block px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-300"
+                role="menuitem"
+                tabindex="-1"
+                id="user-menu-item-0"
+                *ngFor="let menu of userNavigation"
+                (click)="handleAction(menu.action)"
+                >{{ menu.name }}</a
+              >
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

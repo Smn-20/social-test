@@ -1,0 +1,70 @@
+<div
+  [ngClass]="{ 'flex-col items-center': isCompact, 'flex-row items-start gap-4': !isCompact }"
+  class="flex py-4 px-4 h-auto w-full shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg"
+  *ngIf="user"
+>
+  <img class="inline-block mb-2 rounded-full h-36 w-36" [src]="photo ? photo : '../../assets/avatar.svg'" />
+  <div
+    class="flex flex-col items-center"
+    [ngClass]="{ 'items-center': isCompact, 'items-start text-right': !isCompact }"
+  >
+    <div class="mb-2 text-sm text-gray-600" *ngIf="user.memberCode">
+      {{ 'memberCode' | translate }} / {{ user.memberCode }}
+    </div>
+    <div class="mb-2 text-sm text-gray-600">{{ user.firstName + ' ' + user.lastName }}</div>
+    <div class="mb-2 text-sm text-gray-600">
+      {{
+        user.identificationType === 'NATIONAL_ID' || !user.identificationType
+          ? 'NID'
+          : user.identificationType === 'CHILD_ID'
+          ? 'APP-NO'
+          : user.identificationType
+      }}/{{ user.documentNumber || user.nationalId }}
+    </div>
+    <div class="mb-2 text-sm text-gray-600" *ngIf="user.phoneNumber">{{ user.phoneNumber }}</div>
+    <div class="mb-2 text-sm text-gray-600">
+      {{ user.civilStatus || user.maritalStatus | lowercase | translate | titlecase }}
+    </div>
+    <div class="mb-2 text-sm text-gray-600">{{ user.dateOfBirth | date }}</div>
+    <div class="mb-2 text-sm text-gray-600">{{ user.gender | lowercase | translate | titlecase }}</div>
+
+    <div class="flex items-center space-x-4">
+      <div
+        *ngIf="additionLinkConfig?.name && additionLinkConfig?.permissions"
+        appAccessControl
+        [permissions]="additionLinkConfig?.permissions || []"
+        (click)="emitEvent()"
+        class="cursor-pointer flex items-center space-x-2 mt-4 text-sm font-medium text-primary"
+      >
+        <span>
+          <i-feather
+            *ngIf="additionLinkConfig?.iconName"
+            [name]="additionLinkConfig?.iconName || 'text-file'"
+            class="h-5 w-5"
+          >
+          </i-feather>
+        </span>
+        <span>{{ 'surveyAnswers' | translate }}</span>
+        <app-loader *ngIf="iconLoading"></app-loader>
+      </div>
+      <div
+        *ngIf="additionLinkConfig?.name && additionLinkConfig?.permissions"
+        appAccessControl
+        [permissions]="additionLinkConfig?.permissions || []"
+        (click)="emitUpdateDemographics(user.id)"
+        class="cursor-pointer flex items-center space-x-2 mt-4 text-sm font-medium text-gray-600"
+      >
+        <span>
+          <i-feather
+            [matTooltip]="'textEditDemographDetails' | translate"
+            appAccessControl
+            [permissions]="[EPermission.UPDATE_QUESTIONNAIRE]"
+            name="edit-2"
+            class="w-4 h-4 cursor-pointer"
+          ></i-feather>
+        </span>
+        <span>{{ 'edit' | translate }}</span>
+      </div>
+    </div>
+  </div>
+</div>

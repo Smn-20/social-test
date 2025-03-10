@@ -1,0 +1,190 @@
+<div class="flex flex-col space-y-6">
+  <ng-container *ngIf="reportData?.id">
+    <div class="flex flex-col w-full shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:mt-0 bg-white">
+      <div
+        class="flex items-center justify-between w-full px-4 py-4 bg-white border-b border-gray-200 rounded-t-lg sm:px-3"
+      >
+        <div class="flex items-center">
+          <div class="bg-sky-100 p-1 mr-3.5 rounded-full">
+            <div class="p-1 bg-sky-200 rounded-full cursor-pointer" routerLink="/admin/reports">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M13.3334 8H2.66675M2.66675 8L6.66675 12M2.66675 8L6.66675 4"
+                  stroke="#058ccc"
+                  stroke-width="1.33333"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <p class="text-base font-semibold leading-6 text-gray-600">{{'reports' | translate}} / {{ reportData.reportName }}</p>
+        </div>
+        <button
+          *ngIf="reportData.progressStatus === ETargetingStatus.FINISHED"
+          (click)="downloadFile()"
+          class="h-[44px] px-4 py-2.5 text-gray-800 rounded-lg bg-white border-2 border-gray-200 flex items-center font-semibold text-sm hover:bg-gray-200"
+        >
+          <ng-container *ngIf="!reportLoading">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="#344054"
+              class="w-5 h-5 mr-3"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9.75v6.75m0 0l-3-3m3 3l3-3m-8.25 6a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+              />
+            </svg>
+          </ng-container>
+          <ng-container *ngIf="reportLoading">
+            <svg
+              aria-hidden="true"
+              role="status"
+              class="inline w-5 h-5 mr-3 text-black animate-spin"
+              viewBox="0 0 100 101"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                fill="#E5E7EB"
+              ></path>
+              <path
+                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </ng-container>
+          {{'downloadReport' | translate}}
+        </button>
+      </div>
+      <div class="flex flex-col gap-4 px-4 py-4 overflow-y-auto">
+        <div class="text-sm mt-4">
+          <p class="text-gray-500 font-medium">
+            {{'fileType' | translate}}:
+            <span class="font-semibold">{{ reportData.fileType | titlecase }}</span>
+          </p>
+        </div>
+        <div class="w-fit">
+          <ng-container *ngIf="reportData.progressStatus === ETargetingStatus.FINISHED">
+            <div class="inline-flex justify-center items-center bg-green-100 py-0.5 px-2 rounded-2xl">
+              <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+              <span class="text-xs font-medium text-green-600">{{ 'progressCompleted' | translate }}</span>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="reportData.progressStatus === ETargetingStatus.PENDING">
+            <div class="inline-flex justify-center items-center bg-yellow-100 py-0.5 px-2 rounded-2xl">
+              <span class="w-1.5 h-1.5 bg-yellow-600 rounded-full mr-1.5"></span>
+              <span class="text-xs font-medium text-yellow-600">{{ 'progressPending' | translate }}</span>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="reportData.progressStatus === ETargetingStatus.FAILED">
+            <div class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl">
+              <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+              <span class="text-xs font-medium text-red-600">{{ 'progressFailed' | translate }}</span>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="reportData.progressStatus === ETargetingStatus.RUNNING">
+            <div class="inline-flex justify-center items-center bg-blue-100 py-0.5 px-2 rounded-2xl">
+              <span class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-1.5"></span>
+              <span class="text-xs font-medium text-blue-600">{{ 'progressRunning' | translate }}</span>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="reportData.progressStatus === ETargetingStatus.NOT_STARTED">
+            <div class="inline-flex justify-center items-center bg-sky-100 py-0.5 px-2 rounded-2xl">
+              <span class="w-1.5 h-1.5 bg-primary rounded-full mr-1.5"></span>
+              <span class="text-xs font-medium text-primary">{{ 'progressNotStarted' | translate }}</span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <div *ngIf="!loading && data && data.length > 0">
+    <div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+      <div class="px-6 py-5 sm:flex sm:items-center bg-white">
+        <div class="flex">
+          <h1 class="mr-3 text-lg font-semibold leading-6 text-gray-900"> {{'reportData' | translate}} </h1>
+          <div class="inline-flex items-center justify-center px-2 bg-sky-100 rounded-2xl">
+            <span class="text-xs font-medium text-primary"> {{ total | number }} {{'total' | translate}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-root">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
+              <table #tableRef class="min-w-full divide-y divide-gray-300">
+                <thead class="bg-white">
+                  <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                      {{ 'names' | translate }}
+                    </th>
+
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                      {{ 'documentNumber' | translate }}
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'maritalStatus' | translate }}
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'gender' | translate }}
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'DoB' | translate }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <ng-container *ngFor="let item of data; let i = index">
+                    <tr class="cursor-pointer">
+                      <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+                        {{ item?.firstName }} {{ item?.lastName }}
+                      </td>
+                      <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">{{ item?.documentNumber }}</td>
+                      <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+                        {{ item?.civilStatus | titlecase }}
+                      </td>
+                      <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+                        {{ item.gender | titlecase }}
+                      </td>
+                      <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+                        {{ item.dateOfBirth | date : 'short' }}
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="data.length > 0">
+        <mat-paginator
+          [length]="total"
+          [pageIndex]="pagination.page"
+          [pageSize]="pagination.size"
+          (page)="onPageChange($event)"
+          aria-label="select"
+        >
+        </mat-paginator>
+      </ng-container>
+    </div>
+  </div>
+
+  <ng-container *ngIf="loading">
+    <app-table-shimmer [searchSkeleton]="false" [buttonNumber]="0" [rows]="3"></app-table-shimmer>
+  </ng-container>
+  <ng-container *ngIf="!loading && data.length < 1">
+    <div class="flex items-center justify-center w-full">
+      <div class="w-1/2">
+        <app-not-found [showButton]="false"></app-not-found>
+      </div>
+    </div>
+  </ng-container>
+</div>

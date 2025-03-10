@@ -1,0 +1,161 @@
+<div class="flex space-x-3 relative">
+  <div
+    class="px-4 py-2.5 space-x-3 text-gray-800 rounded-lg bg-white border-2 border-gray-200 flex items-center font-semibold text-sm hover:bg-gray-200"
+  >
+    <button #filtersToggle class="flex items-center" (click)="toggleFilters()">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="#344054"
+        class="w-5 h-5 mr-3"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+        />
+      </svg>
+      {{ 'filterButton' | translate }}
+    </button>
+    <mat-chip
+      (click)="openJurisdictionFilterDialog()"
+      class="!bg-gray-200 !border-gray-200 !h-5 text-xs"
+      *ngIf="!isDashboard && selectedFilter?.id"
+    >
+      <div class="flex space-x-2">
+        <span class="text-gray-600"
+          >{{ selectedFilter.type | titlecase }}:
+          {{ (selectedFilter.name | titlecase) || (location?.name | titlecase) }}</span
+        >
+        <button class="text-gray-600" (click)="clearFilter()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-4 h-4"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </mat-chip>
+    <mat-chip
+      (click)="openJurisdictionFilterDialog()"
+      class="!bg-gray-200 !border-gray-200 !h-5 text-xs"
+      *ngIf="isDashboard && isSelected && selectedFilter?.id"
+    >
+      <div class="flex space-x-2">
+        <span class="text-gray-600"
+          >{{ selectedFilter.type | titlecase }}:
+          {{ (selectedFilter.name | titlecase) || (location?.name | titlecase) }}</span
+        >
+        <button class="text-gray-600" (click)="clearFilter()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-4 h-4"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </mat-chip>
+    <mat-chip
+      (click)="toggleStatusDropdown()"
+      class="!h-5 text-xs"
+      [ngClass]="{
+        '!bg-green-100': selectedStatusFilter.value === EState.ACTIVE,
+        '!bg-yellow-100': selectedStatusFilter.value === EState.INACTIVE,
+        '!bg-red-100': selectedStatusFilter.value === EState.DELETED,
+        '!bg-blue-100': selectedStatusFilter.value === EState.CREATED,
+        'text-green-200': selectedStatusFilter.value === ETargetingStatus.FINISHED
+      }"
+      *ngIf="selectedStatusFilter?.value"
+    >
+      <div
+        class="flex space-x-2"
+        [ngClass]="{
+          'text-green-700': selectedStatusFilter.value === EState.ACTIVE,
+          'text-yellow-700': selectedStatusFilter.value === EState.INACTIVE,
+          'text-red-700': selectedStatusFilter.value === EState.DELETED,
+          'text-blue-700': selectedStatusFilter.value === EState.CREATED,
+          'text-green-800': selectedStatusFilter.value === ETargetingStatus.FINISHED
+        }"
+      >
+        <span>{{ 'status' | translate }}: {{ selectedStatusFilter.name | titlecase }}</span>
+        <button (click)="clearStatusFilter()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-4 h-4"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </mat-chip>
+  </div>
+  <ng-container *ngIf="isRoleDropdown">
+    <div class="w-[160px] ml-4">
+      <ng-select
+        placeholder="{{ 'selectRolePlaceholder' | translate }}"
+        [items]="roles"
+        bindLabel="roleName"
+        bindValue="value"
+        (change)="setRoleFilter($event)"
+      >
+        <ng-template ng-option-tmp let-item="item">
+          {{ item.roleName | removeUnderscore }}
+        </ng-template>
+      </ng-select>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="isStatusDropdown">
+    <div class="w-[160px] ml-4">
+      <ng-select
+        placeholder="{{ 'selectStatus' | translate }}"
+        [items]="statuses"
+        bindLabel="name"
+        bindValue="value"
+        (change)="setStatusFilter($event)"
+      ></ng-select>
+    </div>
+  </ng-container>
+  <div
+    #filters
+    class="w-full min-w-[200px] absolute right-0 top-10 z-10 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+    *ngIf="openFilters"
+  >
+    <div role="none">
+      <ng-container *ngIf="allowedFilters.includes(EFilterAction.LOCATION)">
+        <div class="px-4 py-3 cursor-pointer hover:bg-gray-100" (click)="openJurisdictionFilterDialog()">
+          {{ 'jurisdiction' | translate }}
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="allowedFilters.includes(EFilterAction.ROLE)">
+        <div class="border-b border-gray-200"></div>
+        <div class="px-4 py-3 cursor-pointer hover:bg-gray-100" (click)="toggleRoleDropdown()">
+          {{ 'role' | translate }}
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="allowedFilters.includes(EFilterAction.STATUS)">
+        <div class="border-b border-gray-200"></div>
+        <div class="px-4 py-3 cursor-pointer hover:bg-gray-100" (click)="toggleStatusDropdown()">
+          {{ 'status' | translate }}
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

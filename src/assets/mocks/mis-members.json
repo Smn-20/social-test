@@ -1,0 +1,25 @@
+{
+  "status": true,
+  "response": [
+    {
+      "id": "40354eae-8884-440a-85c7-86638328e35a",
+      "state": 1,
+      "status": "ACTIVE",
+      "createdAt": "2024-11-27T07:30:31.268+00:00",
+      "updatedAt": "2024-12-05T12:04:58.493+00:00",
+      "createdBy": null,
+      "updatedBy": null,
+      "firstName": "OLIVE",
+      "lastName": "INGABIRE",
+      "fullName": null,
+      "nationalId": "1199770188359087",
+      "dateOfBirth": "1997-08-03",
+      "gender": "FEMALE",
+      "civilStatus": "SINGLE",
+      "householdId": "de958291-95a4-40c9-bf4c-6ba3da9a1ba3",
+      "memberCode": "10007862",
+      "membershipType": "SPOUSE"
+    }
+  ],
+  "message": "success.message"
+}

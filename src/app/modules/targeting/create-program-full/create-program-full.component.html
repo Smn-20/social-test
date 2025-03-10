@@ -1,0 +1,181 @@
+<div class="flex flex-col space-y-4" *ngIf="program">
+  <!-- program details section -->
+
+  <div class="flex flex-col w-full shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:mt-0 bg-white">
+    <div
+      class="flex items-center justify-between w-full px-4 py-4 bg-white border-b border-gray-200 rounded-t-lg sm:px-3 flex-col md:flex-row"
+    >
+      <div class="flex w-full justify-between">
+        <div class="flex items-center">
+          <div class="bg-sky-100 p-1 mr-3.5 rounded-full">
+            <div class="p-1 bg-sky-200 rounded-full cursor-pointer" routerLink="/admin/targeting/programs">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M13.3334 8H2.66675M2.66675 8L6.66675 12M2.66675 8L6.66675 4"
+                  stroke="#058ccc"
+                  stroke-width="1.33333"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <p class="text-base font-semibold leading-6 text-gray-600">{{'programDetails' | translate}}</p>
+        </div>
+
+        <div class="flex items-center space-x-4" *ngIf="program?.programName">
+          <div class="flex items-center">
+            <button
+              type="button"
+              class="relative inline-flex flex-shrink-0 h-6 transition-colors duration-200 ease-in-out bg-gray-200 border-2 border-transparent rounded-full cursor-pointer w-11 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              [ngClass]="{ 'bg-primary': openProgramEditForm }"
+              role="switch"
+              aria-checked="false"
+              (click)="toggleProgramEditForm()"
+            >
+              <span
+                aria-hidden="true"
+                class="inline-block w-5 h-5 transition duration-200 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none ring-0"
+                [ngClass]="{ 'translate-x-5': openProgramEditForm }"
+              ></span>
+            </button>
+            <span class="ml-3 text-sm text-gray-600">{{'editMode' | translate}} </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col px-4 py-4 space-y-3" *ngIf="!openProgramEditForm">
+      <div class="flex flex-col space-y-1 text-sm">
+        <p class="text-gray-500">
+          {{'programName' | translate}}: <span class="font-medium">{{ program.programName }}</span>
+        </p>
+        <p class="text-gray-500">
+          {{'cutoffName' | translate}}: <span class="font-medium">{{ program.cutOff.cutoffName }}</span>
+        </p>
+        <p class="text-gray-500" *ngIf="program.institutionId.name">
+          {{'institutionName' | translate}}: <span class="font-medium">{{ program.institutionId?.name }}</span>
+        </p>
+        <p class="text-gray-500">
+          {{'matchAllGroups' | translate}}:
+          <span class="font-medium">{{ program.matchAllGroups ? ('yes' | translate) : ('no' | translate) }}</span>
+        </p>
+      </div>
+      <div class="flex flex-col gap-2" *ngIf="program.excludedProgramIds?.length > 0">
+        <p class="mb-1 text-base font-medium text-gray-800">{{'excludedPrograms' | translate}}</p>
+        <div class="flex gap-4">
+          <ng-container *ngFor="let prog of program.excludedProgramIds">
+            <mat-chip class="!bg-gray-200 !border-gray-200">
+              <div class="flex space-x-2">
+                <span class="font-medium text-gray-600">{{ prog.name }}</span>
+              </div>
+            </mat-chip>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2" *ngIf="program.includedProgramIds?.length > 0">
+        <p class="mb-1 text-base font-medium text-gray-800">{{'includedPrograms' | translate}}</p>
+        <div class="flex gap-4">
+          <ng-container *ngFor="let prog of program.includedProgramIds">
+            <mat-chip class="!bg-gray-200 !border-gray-200">
+              <div class="flex space-x-2">
+                <span class="font-medium text-gray-600">{{ prog.name }}</span>
+              </div>
+            </mat-chip>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <ng-container>
+      <div class="p-4" *ngIf="openProgramEditForm">
+        <app-create-program
+          [program]="program"
+          [isCompact]="true"
+          (closeEvent)="toggleProgramEditForm()"
+          (saveEvent)="save($event)"
+        ></app-create-program>
+      </div>
+    </ng-container>
+  </div>
+  <!-- end program details section -->
+  <ng-container *ngIf="steps.length === 1">
+    <h4 class="text-base font-medium">
+      {{'targetGroup' | translate}} (1): <span class="font-semibold"> {{ steps[0].label | titlecase }}</span>
+    </h4>
+  </ng-container>
+  <!-- categories section stepper -->
+  <ng-container *ngIf="steps.length > 1">
+    <div class="flex w-full py-4" id="ProgressStepper">
+      <ng-container *ngFor="let step of steps; let i = index">
+        <div class="w-full">
+          <div class="relative mb-2">
+            <div
+              class="absolute flex align-center items-center align-middle content-center"
+              style="width: calc(100% - 2.5rem - 1rem); top: 50%; transform: translate(-50%, -50%)"
+            >
+              <div
+                *ngIf="i !== 0 || steps.length === i + 1"
+                class="w-full bg-gray-200 rounded items-center align-middle align-center flex-1"
+              >
+                <div
+                  class="w-0 py-1 rounded"
+                  [ngClass]="{
+                    'bg-sky-100': (currentStepper !== i && step.isCompleted) || currentStepper === i
+                  }"
+                  style="width: 100%"
+                ></div>
+              </div>
+            </div>
+
+            <div
+              class="w-10 h-10 justify-center mx-auto rounded-full text-lg flex items-center"
+              [ngClass]="{
+                'bg-primary': step.isCompleted || currentStepper === i,
+                'bg-white border-2 border-gray-200': currentStepper !== i && !step.isCompleted
+              }"
+            >
+              <span
+                class="text-center w-full"
+                *ngIf="!step.isCompleted || currentStepper === i"
+                [ngClass]="{
+                  'text-white': currentStepper === i || step.isCompleted,
+                  'text-gray-600': currentStepper !== i && !step.isCompleted
+                }"
+              >
+                {{ step.step }}
+              </span>
+              <i-feather
+                *ngIf="currentStepper !== i && step.isCompleted"
+                name="check"
+                style="height: 12px !important"
+                class="text-white mb-2"
+              ></i-feather>
+            </div>
+          </div>
+          <div class="text-xs text-center 2xl:text-base">{{ step.label }}</div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <!-- end of categories section stepper -->
+  <h4 class="text-base font-medium text-gray-800">{{'categories' | translate}}</h4>
+  <!-- start of category section -->
+  <ng-container *ngFor="let section of targetGroups; let j = index">
+    <div class="w-full" *ngIf="currentStepper === j">
+      <app-category-section
+        [isFirst]="j === 0"
+        [targetGroup]="section"
+        [categories]="categories[j]"
+        [index]="j"
+        [isLast]="targetGroups.length === j + 1"
+        [isLoading]="loading"
+        (nextEvent)="onNext($event, j)"
+        (previousEvent)="onPrevious($event, j)"
+      ></app-category-section>
+    </div>
+  </ng-container>
+  <!-- end of category section-->
+
+  <!-- proto typing -->
+</div>

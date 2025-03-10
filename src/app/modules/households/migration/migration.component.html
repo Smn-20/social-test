@@ -1,0 +1,176 @@
+<div class="flex flex-col" [ngClass]="{'space-y-0': loading, 'space-y-6': !loading}">
+
+  <div
+    class="flex flex-col w-full md:flex-row md:items-center md:justify-between"
+    *ngIf="(!loading && queryFormGroup.invalid) || (householdQuerying && queryFormGroup.valid) || !loading"
+  >
+    <form class="w-full md:w-[480px]" [formGroup]="queryFormGroup">
+      <div class="input-wrapper relative w-full my-2 rounded-md shadow-sm">
+        <div class="relative">
+          <div class="flex gap-4">
+            <div class="relative input w-full">
+              <input
+                type="text"
+                name="search"
+                maxlength="16"
+                minlength="16"
+                formControlName="query"
+                class="block w-full rounded-md border-0 py-2.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                placeholder="{{ 'searchByHeadNID' | translate }}"
+              />
+            </div>
+            <button [disabled]="queryFormGroup.invalid"
+                [routerLink]="'/admin/households/migration/'+ queryFormGroup.get('query')?.value"
+                class="px-4 py-2.5 w-fit align-end text-white rounded-lg bg-primary flex items-center font-semibold text-sm mt-4 md:mt-0"
+            >
+              <i-feather
+              name="search"
+              class="w-4 h-4 shrink-0"
+            ></i-feather>
+              <span class="ml-2">{{ 'search' | translate }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <app-filter
+      [allowedFilters]="[EFilterAction.LOCATION]"
+      [selectedFilter]="selectedFilter"
+      (setFilterEvent)="onSetFilterEvent($event)"
+  >
+  </app-filter>
+  </div>
+
+  <div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+    <div class="w-full sm:block bg-white rounded-md" [ngClass]="{'-mb-4': loading}">
+      <nav class="flex flex-col lg:flex-row justify-space w-full"  aria-label="Tabs">
+
+        <div class="flex w-full space-x-4 p-2">
+          <button
+            class="flex items-center space-x-3 rounded-md text-gray-500 px-3 py-2 text-sm font-medium"
+            [ngClass]="{ 'bg-sky-100 text-primary': selectedStorageLocation === EStorageLocation.SRIS }"
+            (click)="selectTab(EStorageLocation.SRIS)"
+          >
+            <span>{{ 'textSRISHouseholds' | translate }}</span>
+          </button>
+          <button
+            class="flex items-center space-x-3 rounded-md text-gray-500 px-3 py-2 text-sm font-medium"
+            [ngClass]="{ 'bg-sky-100 text-primary': selectedStorageLocation === EStorageLocation.MIS }"
+            (click)="selectTab(EStorageLocation.MIS)"
+          >
+            <span>{{ 'textMISHouseholds' | translate }}</span>
+          </button>
+        </div>
+
+      </nav>
+    </div>
+    <ng-container *ngIf="!loading && households && households.length > 0">
+      <div class="flow-root">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
+              <table #tableRef class="min-w-full divide-y divide-gray-300">
+                <thead class="bg-white">
+                  <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                      {{ 'lodaCode' | translate }}
+                    </th>
+
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'size' | translate }}
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'householdHead' | translate }}
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'documentNumber' | translate }}
+                    </th>
+
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'memberCode' | translate }}
+                    </th>
+
+                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                      <span class="sr-only"></span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+
+                  <ng-container *ngIf="selectedStorageLocation === EStorageLocation.SRIS">
+                    <ng-container *ngFor="let item of households; let i = index">
+                      <tr class="cursor-pointer hover:bg-slate-50" [routerLink]="'/admin/households/migration/'+ item.head.documentNumber">
+                        <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">{{ item?.lodaCode }}</td>
+                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ item.size }}</td>
+                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                          {{ item.head.firstName + ' ' + item.head.lastName }}
+                        </td>
+                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ item.head.documentNumber }}</td>
+                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ item.memberCode ? item.memberCode : '--N/A--' }}</td>
+                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        <i-feather [matTooltip]="'textCompareMembers' | translate" [routerLink]="'/admin/households/migration/'+ item.head.documentNumber"
+                          name="external-link"
+                          class="cursor-pointer hover:text-primary w-4 h-4 shrink-0"
+                        ></i-feather>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+
+                  <ng-container *ngIf="selectedStorageLocation === EStorageLocation.MIS">
+                  <ng-container *ngFor="let item of households; let i = index">
+                    <tr class="cursor-pointer hover:bg-slate-50" [routerLink]="'/admin/households/migration/'+ item.nationalId">
+                      <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">{{ item?.lodaHouseholdCode }}</td>
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ item.size }}</td>
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        {{ item.firstName + ' ' + item.lastName }}
+                      </td>
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ item.nationalId }}</td>
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ item.memberCode ? item.memberCode : '--N/A--' }}</td>
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        <i-feather [matTooltip]="'textCompareMembers' | translate" [routerLink]="'/admin/households/migration/'+ item.nationalId"
+                        name="external-link"
+                        class="cursor-pointer hover:text-primary w-4 h-4 shrink-0"
+                      ></i-feather>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="households.length > 0">
+        <mat-paginator
+          [length]="total"
+          [pageIndex]="pagination.page"
+          [pageSize]="pagination.size"
+          (page)="onPageChange($event)"
+          aria-label="select"
+        >
+        </mat-paginator>
+      </ng-container>
+    </ng-container>
+
+  </div>
+
+
+  <ng-container *ngIf="loading">
+    <app-table-shimmer
+      [searchSkeleton]="false"
+      [buttonNumber]="0"
+      [rows]="7"
+    ></app-table-shimmer>
+  </ng-container>
+  <ng-container *ngIf="!loading && households && households.length === 0">
+    <div class="flex items-center justify-center w-full">
+      <div class="w-1/2">
+        <app-not-found (refreshEvent)="receiveRefresh($event)" [keyword]="'Households'"></app-not-found>
+      </div>
+    </div>
+  </ng-container>
+</div>
+

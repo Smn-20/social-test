@@ -1,0 +1,14 @@
+.feather-16{
+    width: 16px;
+    height: 16px;
+}
+
+.para-ellipse {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 6.3vh;
+    min-height: 6.3vh;
+}

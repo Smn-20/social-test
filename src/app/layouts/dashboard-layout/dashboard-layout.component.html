@@ -1,0 +1,41 @@
+<div class="px-3 md:px-8 py-4">
+  <!-- <div> -->
+  <div>
+    <p class="py-4">{{'chooseDashboard' | translate}}:</p>
+  </div>
+
+  <app-dashboard-selector></app-dashboard-selector>
+
+  <div *ngIf="selectors" class="grid grid-cols-4 md:grid-cols-6 gap-4">
+    <button
+      *ngFor="let selector of selectors"
+      class="bg-[#6941C6] px-2 md:px-3 py-2 text-center rounded-[4px] text-white min-w-fit"
+    >
+      <!-- <div class="bg-[#6941C6]"> -->
+      {{ selector }}
+      <!-- </div> -->
+    </button>
+  </div>
+  <!-- </div> -->
+
+  <div class="text-center mt-20">
+    <h1 class="my-4">{{'dashboardListing' | translate}}</h1>
+    <div *ngIf="selectedDashboard.length; else noselection" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
+      <div
+        *ngFor="let dashboard of selectedDashboard"
+        class="border border-gray-400 w-full h-80 lg:h-96 flex flex-col rounded-md hover:cursor-pointer hover:transition-shadow hover:shadow-lg hover:shadow-zinc-800"
+      >
+        <p class="text-center py-4 font-bold bg-slate-300 rounded-t-md">{{'graphTitle' | translate}} = {{ dashboard }}</p>
+        <div class="bg-[#6941C6] text-white h-full flex justify-center items-center">{{'graphContent' | translate}}</div>
+      </div>
+    </div>
+
+    <ng-template #noselection>
+      <div class="mt-20 flex flex-col items-center">
+        <h1 class="text-4xl font-bold">{{'noDashboard' | translate}}</h1>
+        <p class="pt-4">{{'selectDashboard' | translate}}:</p>
+        <img src="../../../assets//3640244.webp" alt="" class="md:w-[50rem]" />
+      </div>
+    </ng-template>
+  </div>
+</div>

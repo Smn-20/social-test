@@ -1,0 +1,208 @@
+<ng-container *ngIf="distribution || batch">
+    <div class="flex flex-col w-full shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:mt-0 bg-white">
+        <div
+            class="flex items-center justify-between w-full px-4 py-4 bg-white border-b border-gray-200 rounded-t-lg sm:px-3">
+            <div class="flex items-center">
+                <div class="bg-sky-100 p-1 mr-3.5 rounded-full">
+                    <div 
+                        class="p-1 bg-sky-200 rounded-full cursor-pointer"
+                        routerLink="{{ !batch && distribution 
+                            ? '/admin/revamped-targeting/partner-distributions' 
+                            : '/admin/revamped-targeting/revamped-programs/program-components/' + batch?.associatedProgramComponent
+                        }}"
+                    >
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13.3334 8H2.66675M2.66675 8L6.66675 12M2.66675 8L6.66675 4" stroke="#058ccc"
+                                stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                </div>
+                <p *ngIf="!!batch" class="text-base font-semibold leading-6 text-gray-600">
+                    {{ 'beneficiaries' | translate }} / {{ 'batchOrder' | translate }} {{ batch?.batchOrder }} / {{ 'createdOn' | translate }} {{ batch?.createdAt | date : 'medium' }}
+                </p>
+                <p *ngIf="!!distribution" class="text-base font-semibold leading-6 text-gray-600">
+                    {{ 'distributionCode' | translate }} / {{ distribution?.distributionCode }} / {{ distribution?.externalPartner?.name }} / {{ 'createdOn' | translate }} {{ distribution?.createdAt | date : 'medium' }}
+                </p>
+            </div>
+        </div>
+        <div class="flex flex-row items-center gap-4 px-4 py-4 overflow-y-auto">
+            <div class="inline-flex items-center justify-center px-3 py-2 bg-green-100 rounded-2xl">
+                <span class="text-xs font-medium text-green-600">
+                    {{ totalApprovedByVillage }} {{ 'approvedByVillage' | translate }}
+                </span>
+            </div>
+            <div class="inline-flex items-center justify-center px-3 py-2 bg-sky-100 rounded-2xl">
+                <span class="text-xs font-medium text-primary">
+                    {{ totalSystemicallyAdded }} {{ 'systemicallyAdded' | translate }}
+                </span>
+            </div>
+            <div class="inline-flex items-center justify-center px-3 py-2 bg-sky-100 rounded-2xl">
+                <span class="text-xs font-medium text-primary">
+                    {{ totalAddedByVillage }} {{ 'villageAdded' | translate }}
+                </span>
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+<div *ngIf="beneficiaries && beneficiaries.length > 0" class="mt-8">
+    <div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+        <div class="px-6 py-5 sm:flex sm:items-center bg-white">
+            <div class="flex">
+                <h1 class="mr-3 text-lg font-semibold leading-6 text-gray-900">
+                    {{ 'beneficiaries' | translate }}
+                </h1>
+                <div class="inline-flex items-center justify-center px-2 bg-sky-100 rounded-2xl">
+                    <span class="text-xs font-medium text-primary">
+                        {{ totalBeneficiaries }} {{ 'beneficiaries' | translate }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
+                        <table class="min-w-full bg-white divide-y divide-gray-300">
+                            <thead class="bg-white">
+                                <tr>
+                                    <th scope="col"
+                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'householdCode' | translate }}
+                                    </th>
+                                    <th scope="col"
+                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'score' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'beneficiaryType' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'beneficiaryNames' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'documentNumber' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'beneficiaryHelped' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'helpingParty' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'approvedByVillage' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'systemicallyAdded' | translate }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <ng-container *ngFor="let beneficiary of beneficiaries; let i = index">
+                                    <tr class="cursor-pointer">
+                                        <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ beneficiary?.beneficiaryHousehold?.code }}
+                                        </td>
+                                        <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ beneficiary?.beneficiaryHousehold?.score | number }}
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ beneficiary?.beneficiaryType }}
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ beneficiary?.beneficiary?.firstName + ' ' + beneficiary?.beneficiary?.lastName }}
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ beneficiary?.beneficiary?.nationalId }}
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <div
+                                                *ngIf="(
+                                                    beneficiary?.beneficiaryHelpedByExternalPartner ||
+                                                    beneficiary?.beneficiaryHelpedByInternalInstitution
+                                                )"
+                                                class="inline-flex justify-center items-center bg-green-100 py-0.5 px-2 rounded-2xl"
+                                            >
+                                                <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+                                                <span class="text-xs font-medium text-green-600">{{ 'helped' | translate }}</span>
+                                            </div>
+                                            <div
+                                                *ngIf="(
+                                                    !beneficiary?.beneficiaryHelpedByExternalPartner &&
+                                                    !beneficiary?.beneficiaryHelpedByInternalInstitution
+                                                )"
+                                                class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl"
+                                            >
+                                                <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+                                                <span class="text-xs font-medium text-red-600">{{ 'notHelped' | translate }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ beneficiary?.beneficiaryHelpedByExternalPartner 
+                                                ? beneficiary?.externalPartner?.name
+                                                : beneficiary?.beneficiaryHelpedByInternalInstitution 
+                                                    ? 'MINALOC' 
+                                                    : '--N/A--'
+                                            }}
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <div
+                                                *ngIf="beneficiary?.beneficiaryHelpedByExternalPartner"
+                                                class="inline-flex justify-center items-center bg-green-100 py-0.5 px-2 rounded-2xl"
+                                            >
+                                                <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+                                                <span class="text-xs font-medium text-green-600">{{ 'yes' | translate }}</span>
+                                            </div>
+                                            <div
+                                                *ngIf="!beneficiary?.beneficiaryHelpedByExternalPartner"
+                                                class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl"
+                                            >
+                                                <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+                                                <span class="text-xs font-medium text-red-600">{{ 'no' | translate }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <div
+                                                *ngIf="beneficiary?.beneficiarySystemicallyAdded"
+                                                class="inline-flex justify-center items-center bg-green-100 py-0.5 px-2 rounded-2xl"
+                                            >
+                                                <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+                                                <span class="text-xs font-medium text-green-600">{{ 'yes' | translate }}</span>
+                                            </div>
+                                            <div
+                                                *ngIf="!beneficiary?.beneficiarySystemicallyAdded"
+                                                class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl"
+                                            >
+                                                <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+                                                <span class="text-xs font-medium text-red-600">{{ 'no' | translate }}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-container *ngIf="beneficiaries.length > 0">
+            <mat-paginator 
+                [length]="totalBeneficiaries"
+                [pageIndex]="pagination.page"
+                [pageSize]="pagination.size"
+                (page)="onPageChange($event)"
+                aria-label="select">
+            </mat-paginator>
+        </ng-container>
+    </div>
+</div>
+<ng-container *ngIf="loading">
+    <app-table-shimmer [buttonNumber]="1" [cols]="5" [rows]="6"></app-table-shimmer>
+</ng-container>
+<ng-container *ngIf="beneficiaries && beneficiaries.length === 0 && !loading">
+    <div class="flex items-center justify-center w-full mt-10">
+        <div class="w-[800px]">
+            <app-not-found (refreshEvent)="receiveRefresh($event)" [keyword]="'beneficiaries'"></app-not-found>
+        </div>
+    </div>
+</ng-container>

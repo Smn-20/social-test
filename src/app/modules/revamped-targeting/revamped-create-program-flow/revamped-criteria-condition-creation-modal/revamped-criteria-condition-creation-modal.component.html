@@ -1,0 +1,639 @@
+<div class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+
+  <div class="fixed inset-0 z-30 overflow-y-auto h-auto">
+    <div class="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0 w-auto mx-auto">
+      <div
+        class="relative py-5 overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl px-7 sm:w-full sm:max-w-lg md:max-w-2xl lg:max-w-3xl xl:max-w-5xl sm:px-11 sm:py-7">
+        <div>
+          <h1 class="absolute top-0 left-0 text-lg font-semibold pt-7 pl-11">
+            {{ 'addCondition' | translate }}
+          </h1>
+          <div class="absolute top-0 right-0 pt-7 pr-11 sm:block">
+            <button type="button"
+              class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              (click)="close(true)">
+              <span class="sr-only">{{'appClose' | translate}}</span>
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-col mt-10">
+          <form class="w-full flex-col space-y-6" [formGroup]="conditionFormGroup">
+            <div class="flex flex-col sm:space-y-6 items-center justify-between">
+              <div class="flex w-full space-x-10 justify-center items-center">
+                <div class="flex flex-col w-full space-y-2">
+                  <label for="questionCategory" class="block text-sm font-medium leading-6 text-gray-600 mb-1">
+                    {{'questionSection' | translate}}
+                  </label>
+                  <ng-select
+                    *ngIf="!sectionLoading"
+                    placeholder="{{'selectSectionPlaceholder' | translate}}"
+                    formControlName="questionCategory"
+                    [items]="sections"
+                    (change)="getQuestionsByRespondentSection($event)"
+                    bindLabel="value"
+                    [clearable]="false"
+                    [appendTo]="'body'"
+                    bindValue="key"
+                    [class]="
+                      formControls['questionCategory'].touched && formControls['questionCategory'].errors
+                        ? 'form-control invalid-feedback'
+                        : 'form-control'
+                    "
+                  ></ng-select>
+                  <ng-container *ngIf="sectionLoading">
+                    <ng-container [ngTemplateOutlet]="spinner2"> </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+              <div class="flex w-full space-x-10 justify-center items-center">
+                <div class="flex flex-col w-full space-y-2">
+                  <label for="Select survey" class="block text-sm font-medium leading-6 text-gray-600 mb-1">
+                    {{'questions' | translate}} / {{'searchQuestion' | translate}}
+                  </label>
+                  <ng-select
+                    *ngIf="!questionLoading"
+                    [disabled]="formControls['questionCategory'].invalid"
+                    placeholder="Select question"
+                    formControlName="question"
+                    [items]="questions"
+                    (change)="onQuestionChange($event)"
+                    bindLabel="description"
+                    [clearable]="false"
+                    [appendTo]="'body'"
+                    [class]="
+                      formControls['question'].touched && formControls['question'].errors
+                        ? 'form-control invalid-feedback'
+                        : 'form-control'
+                    "
+                  ></ng-select>
+                  <ng-container *ngIf="questionLoading">
+                    <ng-container [ngTemplateOutlet]="spinner2"> </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+
+              <!-- CONDITION VALUES AND OPERATION -->
+              <ng-container *ngIf="selectedQuestion">
+                <div class="flex w-full space-x-10 justify-center items-center relative">
+                  <div class="flex flex-col w-full space-y-2">
+                    <label for="Select operation" class="block text-sm font-medium leading-6 text-gray-600">
+                      {{ 'operationCondtionValueCriteria' | translate }}
+                    </label>  
+                    <ng-select
+                      placeholder="Select operation"
+                      [items]="operations"
+                      (change)="onConditionValueOperation($event)"
+                      bindLabel="name"
+                      bindValue="value"
+                      [clearable]="false"
+                    ></ng-select>
+                  </div>
+                </div>
+              
+                <!-- Render the input based on the selected operation and question type -->
+                <div *ngIf="selectedConditionValueOperation" class="flex w-full space-x-10 justify-center items-center relative">
+                  <!-- For questions with answers (select logic) -->
+                  <div class="flex-shrink-0">
+                    <div
+                      class="block text-sm font-medium leading-6 text-gray-600 bg-gray-600/10 px-5 py-2.5 rounded-md whitespace-nowrap"
+                    >
+                      {{ selectedConditionValueOperation | removeUnderscore | uppercase }} <ng-container
+                        *ngIf="[
+                          'EQUAL',
+                          'NOT_EQUAL',
+                          'GREATER_THAN_OR_EQUAL',
+                          'LESS_THAN_OR_EQUAL',
+                        ].includes(selectedConditionValueOperation ?? '')"
+                      >TO</ng-container>
+                      <ng-container
+                        *ngIf="[
+                          'IN_RANGE', 'NOT_IN_RANGE'
+                        ].includes(selectedConditionValueOperation ?? '')"
+                      >OF</ng-container>
+                    </div>
+                  </div>
+                  <div class="flex flex-col w-full space-y-2" *ngIf="selectedAnswers && selectedAnswers.length > 0">
+                    <!-- For IN or NOT_IN operations, allow multiple select -->
+                    <div *ngIf="isMultipleValueOperation(selectedConditionValueOperation)" class="flex flex-col w-full space-y-2">
+                      <ng-select
+                        [items]="selectedAnswers"
+                        [multiple]="true"
+                        bindLabel="answer"
+                        bindValue="answer"
+                        placeholder="Select values"
+                        (change)="onConditionValue($event, false)"
+                      ></ng-select>
+                    </div>
+                
+                    <!-- For operations with single-select (boolean, radio, dropdown, etc.) -->
+                    <div *ngIf="isSingleSelectOperation(selectedConditionValueOperation, question_category)" class="flex flex-col w-full space-y-2">
+                      <ng-select
+                        [items]="selectedAnswers"
+                        [multiple]="false"
+                        bindLabel="answer"
+                        bindValue="answer"
+                        placeholder="Select a value"
+                        (change)="onConditionValue($event, false)"
+                      ></ng-select>
+                    </div>
+                
+                    <!-- For GREATER_THAN_OR_EQUAL and LESS_THAN_OR_EQUAL, two single-select fields -->
+                    <ng-container *ngIf="requiresRangeSelect(selectedConditionValueOperation)">
+                      <div class="flex flex-col w-full space-y-2">
+                        <ng-select
+                          [items]="selectedAnswers"
+                          [multiple]="false"
+                          bindLabel="answer"
+                          bindValue="answer"
+                          placeholder="Select start value"
+                          (change)="onConditionValue($event, false, 1)"
+                        ></ng-select>
+                      </div>
+                      <div
+                        *ngIf="[
+                          'GREATER_THAN_OR_EQUAL',
+                          'LESS_THAN_OR_EQUAL',
+                          'IN_RANGE', 'NOT_IN_RANGE',
+                        ].includes(selectedLimitValueOperation ?? '')"
+                        class="flex justify-between flex-col flex-shrink-0"
+                      >
+                        <div
+                          class="block text-sm font-medium leading-6 text-gray-600 bg-gray-600/10 px-5 py-2.5 rounded-md whitespace-nowrap"
+                        >
+                          AND 
+                        </div>
+                      </div>
+                      <div class="flex flex-col w-full space-y-2">
+                        <ng-select
+                          [items]="selectedAnswers"
+                          [multiple]="false"
+                          bindLabel="answer"
+                          bindValue="answer"
+                          placeholder="Select end value"
+                          (change)="onConditionValue($event, false, 2)"
+                        ></ng-select>
+                      </div>
+                    </ng-container>
+                  </div>
+                
+                  <!-- For text input fields -->
+                  <div class="flex flex-col w-full space-y-2" *ngIf="requiresTextInput(selectedConditionValueOperation, question_category)">
+                    <input
+                      [type]="getInputType(question_category)"
+                      placeholder="Enter a value"
+                      class="input-field rounded-md border-[#d9d9d9]"
+                      (change)="onConditionValue($event, false)"
+                    />
+                  </div>
+                
+                  <!-- For range input when there are no predefined answers (fallback) -->
+                  <ng-container
+                    *ngIf="requiresRangeInput(selectedConditionValueOperation) && (!selectedAnswers || selectedAnswers.length === 0)"
+                  >
+                    <div class="flex flex-col w-full space-y-2">
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="Enter start value"
+                        class="input-field rounded-md border-[#d9d9d9]"
+                        (change)="onConditionValue($event, true, 1)"
+                      />
+                    </div>
+                    <div
+                      *ngIf="[
+                        'IN_RANGE', 'NOT_IN_RANGE',
+                        'GREATER_THAN_OR_EQUAL',
+                        'LESS_THAN_OR_EQUAL',
+                      ].includes(selectedConditionValueOperation ?? '')"
+                      class="flex justify-between flex-col flex-shrink-0"
+                    >
+                      <div
+                        class="block text-sm font-medium leading-6 text-gray-600 bg-gray-600/10 px-5 py-2.5 rounded-md whitespace-nowrap"
+                      >
+                        AND 
+                      </div>
+                    </div>
+                    <div class="flex flex-col w-full space-y-2">
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="Enter start value"
+                        class="input-field rounded-md border-[#d9d9d9]"
+                        (change)="onConditionValue($event, true, 2)"
+                      />
+                    </div>
+                  </ng-container>
+                </div>                                               
+              </ng-container>
+
+              <!-- METRIC VALUES AND OPERATIONS -->
+              <ng-container *ngIf="selectedQuestion">
+                <div class="flex w-full space-x-10 justify-center items-center relative">
+                  <div class="flex flex-col w-full space-y-2">
+                    <label for="Select operation" class="block text-sm font-medium leading-6 text-gray-600">
+                      {{'operationLimitValueCriteria' | translate}}
+                    </label>
+                    <ng-select
+                      placeholder="Select operation"
+                      [items]="limitOperations"
+                      (change)="onLimitValueOperation($event)"
+                      bindLabel="name"
+                      bindValue="value"
+                      [appendTo]="'body'"
+                      [clearable]="false"
+                    ></ng-select>
+                  </div>
+                </div>
+                <div class="flex w-full space-x-10 justify-center items-center relative" *ngIf="selectedLimitValueOperation">
+                  <div class="flex-shrink-0">
+                    <div
+                      class="block text-sm font-medium leading-6 text-gray-600 bg-gray-600/10 px-5 py-2.5 rounded-md whitespace-nowrap"
+                    >
+                      {{ selectedLimitValueOperation | removeUnderscore | uppercase }} <ng-container
+                        *ngIf="[
+                          'EQUAL',
+                          'NOT_EQUAL',
+                          'GREATER_THAN_OR_EQUAL',
+                          'LESS_THAN_OR_EQUAL',
+                        ].includes(selectedLimitValueOperation ?? '')"
+                      >TO</ng-container><ng-container
+                        *ngIf="[
+                          'IN_RANGE', 'NOT_IN_RANGE'
+                        ].includes(selectedLimitValueOperation ?? '')"
+                      >OF</ng-container>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex flex-col w-full space-y-2"
+                    *ngIf="selectedLimitValueOperation !== 'ALL' && ![
+                      'GREATER_THAN_OR_EQUAL',
+                      'LESS_THAN_OR_EQUAL',
+                      'IN_RANGE',
+                      'NOT_IN_RANGE'
+                    ].includes(selectedLimitValueOperation ?? '')"
+                  >
+                    <input
+                      [type]="getInputType(question_category)"
+                      placeholder="Enter number value"
+                      class="input-field rounded-md border-[#d9d9d9]"
+                      (change)="onLimitValue($event, false)"
+                    />
+                  </div>
+
+                  <ng-container
+                    *ngIf="selectedLimitValueOperation !== 'ALL' && 
+                    [
+                      'GREATER_THAN_OR_EQUAL',
+                      'LESS_THAN_OR_EQUAL'
+                    ].includes(selectedLimitValueOperation ?? '')"
+                  >
+                    <div class="flex flex-col w-full space-y-2">
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="Enter number value"
+                        class="block w-full rounded-md border-0 text py-2.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                        (change)="onLimitValue($event, true, 1)"
+                      />
+                    </div>
+                    <div class="flex justify-between flex-col flex-shrink-0">
+                      <div
+                        class="block text-sm font-medium leading-6 text-gray-600 bg-gray-600/10 px-5 py-2.5 rounded-md whitespace-nowrap"
+                      >
+                        AND 
+                      </div>
+                    </div>
+                    <div class="flex flex-col w-full space-y-2">
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="Enter number value"
+                        class="block w-full rounded-md border-0 py-2.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                        (change)="onLimitValue($event, true, 2)"
+                      />
+                    </div>
+                  </ng-container>
+                  <div
+                    *ngIf="selectedLimitValueOperation === 'ALL'"
+                    class="flex justify-between flex-col flex-shrink-0"
+                  >
+                    <div
+                      class="block text-sm font-medium leading-6 text-gray-600 bg-gray-600/10 px-5 py-2.5 rounded-md whitespace-nowrap"
+                    >
+                      ALL MEMBERS OF THIS HOUSEHOLD WILL BE CONSIDERED ON THIS EVALUATION. AND HOUSEHOLDS/MEMBERS RETURNED.
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+
+            <div
+              *ngIf="selectedQuestion?.respondentType === 'PERSON' &&
+                criteria?.applies_to === ECriteriaApplicationGroup.HOUSEHOLDS &&
+                selectedLimitValueOperation && selectedLimitValueOperation === 'ALL'"
+              class="flex flex-col sm:space-y-6 items-start justify-between bg-gray-600/10 px-3 py-2.5 rounded-lg"
+            >              
+              <div class="w-full flex items-center justify-between my-4">
+                <div class="flex flex-col gap-2">
+                  <p class="block text-md font-semibold leading-6 text-gray-600">
+                    {{'remainingMembersActionTitle' | translate}}
+                  </p>
+                  <p class="block text-sm font-medium leading-6 text-gray-600">
+                    {{'remainingMembersActionSubTitle' | translate}}
+                  </p>
+                </div>
+                <button
+                  (click)="toggleAddSubCondition()"
+                  class="px-4 w-auto py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-4 h-4 mr-3"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  {{ 'addCondition' | translate }}
+                </button>
+              </div>
+              <ng-container *ngIf="leftMembersConditions.length > 0">
+                <ng-container *ngFor="let subCondition of leftMembersConditions; let i = index">
+                  <div class="w-full flex items-center justify-between">
+                    <div class="w-full bg-white rounded-lg p-2">
+                      <div class="w-[95%] flex items-center justify-between gap-3">
+                        <div class="flex flex-col w-5/12">
+                          <label for="questionCategory" class="block text-sm font-medium leading-6 text-gray-600 mb-1">
+                            {{'questionSection' | translate}}
+                          </label>
+                          <ng-select
+                            *ngIf="!sectionLoading"
+                            placeholder="{{'selectSectionPlaceholder' | translate}}"
+                            [(ngModel)]="subCondition.question_category"
+                            [ngModelOptions]="{standalone: true}"
+                            [items]="sections"
+                            (change)="getSubConditionQuestionsByRespondentSection($event, subCondition.sub_condition_id ?? '')"
+                            bindLabel="value"
+                            [clearable]="false"
+                            [appendTo]="'body'"
+                            bindValue="key"
+                          ></ng-select>
+                          <ng-container *ngIf="sectionLoading">
+                            <ng-container [ngTemplateOutlet]="spinner2"> </ng-container>
+                          </ng-container>
+                        </div>
+                        <div class="flex flex-col w-5/12">
+                          <label for="Select survey" class="block text-sm font-medium leading-6 text-gray-600 mb-1">
+                            {{'questions' | translate}} / {{'searchQuestion' | translate}}
+                          </label>
+                          <ng-select
+                            *ngIf="!subConditionQuestionLoading"
+                            [disabled]="!subCondition.question_category"
+                            placeholder="Select question"
+                            [(ngModel)]="subCondition.question"
+                            [ngModelOptions]="{standalone: true}"
+                            [items]="subConditionQuestions"
+                            (change)="onSubConditionQuestionChange($event)"
+                            bindLabel="description"
+                            [clearable]="false"
+                            [appendTo]="'body'"
+                          ></ng-select>
+                        </div>
+                        <div class="flex flex-col w-2/12 gap-2">
+                          <label for="Select survey" class="block text-sm font-medium leading-6 text-gray-600 mx-auto">
+                            {{'isRequired' | translate | titlecase}}
+                          </label>
+                          <button
+                            type="button"
+                            class="relative inline-flex flex-shrink-0 h-6 transition-colors duration-200 ease-in-out bg-gray-200 border-2 border-transparent rounded-full cursor-pointer w-11 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 mx-auto"
+                            [ngClass]="{ 'bg-primary': true }"
+                            role="switch"
+                            aria-checked="false"
+                            (click)="onConditionRequiredByTheRest()"
+                          >
+                            <span
+                              aria-hidden="true"
+                              class="inline-block w-5 h-5 transition duration-200 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none ring-0"
+                              [ngClass]="{ 'translate-x-5': true }"
+                            ></span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- CONDITION VALUES AND OPERATION -->
+                      <div class="flex flex-col items-center gap-2 mt-3" *ngIf="subCondition.question">
+                        <div class="flex w-full space-x-10 justify-center items-center relative">
+                          <div class="flex flex-col w-full space-y-2">
+                            <label for="Select operation" class="block text-sm font-medium leading-6 text-gray-600">
+                              {{ 'operationCondtionValueCriteria' | translate }}
+                            </label>
+                            <ng-select
+                              placeholder="Select operation"
+                              [items]="subConditionOperations"
+                              (change)="onSubConditionValueOperation($event)"
+                              bindLabel="name"
+                              bindValue="value"
+                              [clearable]="false"
+                            ></ng-select>
+                          </div>
+                        </div>
+                      
+                        <!-- Render the input based on the selected operation and question type -->
+                        <div *ngIf="subConditionSelectedConditionValueOperation" class="flex w-full space-x-4 justify-center items-center relative">
+                          <!-- For questions with answers (select logic) -->
+                          <div class="flex-shrink-0">
+                            <div
+                              class="block text-sm font-medium leading-6 text-gray-600 bg-gray-600/10 px-5 py-2 rounded-md whitespace-nowrap"
+                            >
+                              {{ subConditionSelectedConditionValueOperation | removeUnderscore | uppercase }} <ng-container
+                                *ngIf="[
+                                  'EQUAL',
+                                  'NOT_EQUAL',
+                                  'GREATER_THAN_OR_EQUAL',
+                                  'LESS_THAN_OR_EQUAL',
+                                ].includes(subConditionSelectedConditionValueOperation ?? '')"
+                              >TO</ng-container>
+                              <ng-container
+                                *ngIf="[
+                                  'IN_RANGE', 'NOT_IN_RANGE'
+                                ].includes(subConditionSelectedConditionValueOperation ?? '')"
+                              >OF</ng-container>
+                            </div>
+                          </div>
+                          <div class="flex flex-col w-full space-y-2" *ngIf="subConditionSelectedAnswers && subConditionSelectedAnswers.length > 0">
+                            <!-- For IN or NOT_IN operations, allow multiple select -->
+                            <div *ngIf="isMultipleValueOperation(subConditionSelectedConditionValueOperation)" class="flex flex-col w-full space-y-2">
+                              <ng-select
+                                [items]="subConditionSelectedAnswers"
+                                [multiple]="true"
+                                bindLabel="answer"
+                                bindValue="answer"
+                                placeholder="Select values"
+                                (change)="onConditionValue($event, false)"
+                              ></ng-select>
+                            </div>
+                        
+                            <!-- For operations with single-select (boolean, radio, dropdown, etc.) -->
+                            <div *ngIf="isSingleSelectOperation(subConditionSelectedConditionValueOperation, question_category)" class="flex flex-col w-full space-y-2">
+                              <ng-select
+                                [items]="subConditionSelectedAnswers"
+                                [multiple]="false"
+                                bindLabel="answer"
+                                bindValue="answer"
+                                placeholder="Select a value"
+                                (change)="onConditionValue($event, false)"
+                              ></ng-select>
+                            </div>
+                        
+                            <!-- For GREATER_THAN_OR_EQUAL and LESS_THAN_OR_EQUAL, two single-select fields -->
+                            <ng-container *ngIf="requiresRangeSelect(subConditionSelectedConditionValueOperation)">
+                              <div class="flex flex-col w-full space-y-2">
+                                <ng-select
+                                  [items]="subConditionSelectedAnswers"
+                                  [multiple]="false"
+                                  bindLabel="answer"
+                                  bindValue="answer"
+                                  placeholder="Select start value"
+                                  (change)="onConditionValue($event, false, 1)"
+                                ></ng-select>
+                              </div>
+                              <div
+                                *ngIf="[
+                                  'GREATER_THAN_OR_EQUAL',
+                                  'LESS_THAN_OR_EQUAL',
+                                  'IN_RANGE', 'NOT_IN_RANGE',
+                                ].includes(selectedLimitValueOperation ?? '')"
+                                class="flex justify-between flex-col flex-shrink-0"
+                              >
+                                <div
+                                  class="block text-sm font-medium leading-6 text-gray-600 bg-gray-600/10 px-5 py-2 rounded-md whitespace-nowrap"
+                                >
+                                  AND 
+                                </div>
+                              </div>
+                              <div class="flex flex-col w-full space-y-2">
+                                <ng-select
+                                  [items]="subConditionSelectedAnswers"
+                                  [multiple]="false"
+                                  bindLabel="answer"
+                                  bindValue="answer"
+                                  placeholder="Select end value"
+                                  (change)="onConditionValue($event, false, 2)"
+                                ></ng-select>
+                              </div>
+                            </ng-container>
+                          </div>
+                        
+                          <!-- For text input fields -->
+                          <div class="flex flex-col w-full space-y-2" *ngIf="requiresTextInput(subConditionSelectedConditionValueOperation, question_category)">
+                            <input
+                              [type]="getInputType(question_category)"
+                              placeholder="Enter a value"
+                              class="input-field rounded-md border-[#d9d9d9]"
+                              (change)="onConditionValue($event, false)"
+                            />
+                          </div>
+                        
+                          <!-- For range input when there are no predefined answers (fallback) -->
+                          <ng-container
+                            *ngIf="requiresRangeInput(subConditionSelectedConditionValueOperation) && (!selectedAnswers || selectedAnswers.length === 0)"
+                          >
+                            <div class="flex flex-col w-full space-y-2">
+                              <input
+                                type="number"
+                                min="0"
+                                placeholder="Enter start value"
+                                class="input-field rounded-md border-[#d9d9d9]"
+                                (change)="onConditionValue($event, true, 1)"
+                              />
+                            </div>
+                            <div
+                              *ngIf="[
+                                'IN_RANGE', 'NOT_IN_RANGE',
+                                'GREATER_THAN_OR_EQUAL',
+                                'LESS_THAN_OR_EQUAL',
+                              ].includes(selectedConditionValueOperation ?? '')"
+                              class="flex justify-between flex-col flex-shrink-0"
+                            >
+                              <div
+                                class="block text-sm font-medium leading-6 text-gray-600 bg-gray-600/10 px-5 py-2 rounded-md whitespace-nowrap"
+                              >
+                                AND 
+                              </div>
+                            </div>
+                            <div class="flex flex-col w-full space-y-2">
+                              <input
+                                type="number"
+                                min="0"
+                                placeholder="Enter start value"
+                                class="input-field rounded-md border-[#d9d9d9]"
+                                (change)="onConditionValue($event, true, 2)"
+                              />
+                            </div>
+                          </ng-container>
+                        </div>                                               
+                      </div>
+
+                    </div>
+                    <div class="w-[5%] flex items-center justify-end">
+                      <div class="w-full flex items-center justify-center">
+                        <i-feather
+                          (click)="removeSubCondition(subCondition.sub_condition_id)"
+                          class="h-4 w-4 cursor-pointer text-red-600" name="trash-2"
+                        ></i-feather>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+
+            <div class="flex w-full justify-end">
+              <button
+                class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white flex items-center justify-center font-semibold text-sm mr-10 w-28 h-10"
+                (click)="close(true)">
+                {{ 'cancelButton' | translate }}
+              </button>
+              <button (click)="close(false)"
+                class="px-4 w-auto py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="w-4 h-4 mr-3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                {{ 'saveButton' | translate }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #spinner2>
+  <svg
+    aria-hidden="true"
+    role="status"
+    class="inline w-5 h-5 ml-3 primary animate-spin"
+    viewBox="0 0 100 101"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+      fill="#E5E7EB"
+    ></path>
+    <path
+      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+      fill="currentColor"
+    ></path>
+  </svg>
+</ng-template>

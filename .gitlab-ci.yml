@@ -1,0 +1,117 @@
+stages:
+  - deploy_files
+  - build_image
+  - deploy
+
+variables:
+  IMAGE_NAME: $CI_REGISTRY_IMAGE
+  IMAGE_TAG: '1.0'
+  IMAGE_TAG_STABLE: '1.0-stable'
+  DEV_SERVER: '10.10.86.61'
+  DEV_ENDPOINT: ui.sris.minaloc.rw
+
+copy_app_files:
+  stage: deploy_files
+  script:
+    - sudo mkdir -p /opt/staging/frontend-application-v2 && sudo chmod -R 755 /opt/staging/frontend-application-v2 && sudo chown -R $USER:$USER /opt/staging/frontend-application-v2
+    - sudo cp -r /home/gitlab-runner/builds/$CI_RUNNER_SHORT_TOKEN/0/minaloc/social-registry-system/frontend-application-v2/* /opt/staging/frontend-application-v2/
+  tags:
+    - sr-is-staging
+  only:
+    - staging
+    - development
+
+build_frontend_image:
+  stage: build_image
+  needs:
+    - copy_app_files
+  script:
+    - cd /opt/staging/frontend-application-v2/
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+  tags:
+    - sr-is-staging
+  only:
+    - staging
+    - development
+
+push_frontend_image:
+  stage: build_image
+  needs:
+    - build_frontend_image
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+  tags:
+    - sr-is-staging
+  only:
+    - staging
+
+deploy_frontend:
+  stage: deploy
+  script:
+    - cd /opt/staging/kube-manifests/kube-frontend-application-v2
+    - sudo kubectl delete deployment frontend-application-v2
+    - sudo kubectl apply -f frontend-application-v2-deployment.yaml
+    - sudo kubectl delete svc frontend-application-v2-svc
+    - sudo kubectl apply -f frontend-application-v2-svc.yaml
+  tags:
+    - sr-is-staging
+  only:
+    - staging
+
+  environment:
+    name: staging
+    url: $DEV_ENDPOINT
+
+
+copy_files:
+  stage: deploy_files
+  script:
+    - sudo mkdir -p /opt/staging/frontend-application-v2 && sudo chmod -R 755 /opt/staging/frontend-application-v2 && sudo chown -R $USER:$USER /opt/staging/frontend-application-v2
+    - cp -r /home/gitlab-runner/builds/$CI_RUNNER_SHORT_TOKEN/0/minaloc/social-registry-system/frontend-application-v2/* /opt/staging/frontend-application-v2/
+  tags:
+    - sris-prod-ui-01
+  only:
+    - production
+
+build_image:
+  stage: build_image
+  needs:
+    - copy_files
+  script:
+    - cd /opt/staging/frontend-application-v2/
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG_STABLE .
+  tags:
+    - sris-prod-ui-01
+  only:
+    - production
+
+push_image:
+  stage: build_image
+  needs:
+    - build_image
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker push $IMAGE_NAME:$IMAGE_TAG_STABLE
+  tags:
+    - sris-prod-ui-01
+  only:
+    - production
+
+deploy_image:
+  stage: deploy
+  needs:
+    - push_image
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker pull $IMAGE_NAME:$IMAGE_TAG_STABLE
+    - docker stop sris-ui
+    - docker rm sris-ui
+    - docker run -d --name sris-ui -p 4200:80 $IMAGE_NAME:$IMAGE_TAG_STABLE
+  tags:
+    - sris-prod-ui-01
+  only:
+    - production

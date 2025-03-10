@@ -1,0 +1,230 @@
+<div class="flex flex-col space-y-12">
+  <div class="flex flex-col w-full p-8 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg bg-white">
+    <div class="flex flex-col space-y-6 sm:items-center sm:flex-row sm:justify-between sm:w-full sm:space-y-0">
+      <div class="flex items-center justify-center sm:flex-row sm:space-x-2">
+        <div class="flex">
+          <img
+            class="object-cover h-auto border-4 border-white rounded-full w-40"
+            [src]="profilePhoto || '../../assets/avatar.svg'"
+            alt=""
+            style="box-shadow: 0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)"
+          />
+        </div>
+        <div class="flex flex-col items-start justify-center w-full space-y-3 pl-3">
+          <span class="text-lg font-semibold">{{ user?.firstName }} {{ user?.lastName }}</span>
+          <span class="px-2 py-1 text-sm text-white rounded-lg bg-primary" *ngFor="let role of user.roles">{{
+            role?.roleName | removeUnderscore
+          }}</span>
+        </div>
+      </div>
+      <button
+        (click)="logout()"
+        class="px-4 py-2.5 rounded-lg bg-white border border-gray-300 flex items-center justify-center font-semibold text-sm mr-8 h-10"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-6 h-6 mr-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+          />
+        </svg>
+        {{ 'logout' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="flex flex-col space-y-6">
+    <div>
+      <div class="flex justify-between items-center w-full">
+        <div class="font-medium flex items-center space-x-8 text-gray-600 mb-4">
+          <span> {{ 'personalInfo' | translate }} </span>
+          <div class="flex items-center">
+            <button
+              type="button"
+              class="relative inline-flex flex-shrink-0 h-6 transition-colors duration-200 ease-in-out bg-gray-200 border-2 border-transparent rounded-full cursor-pointer w-11 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              [ngClass]="{ 'bg-primary': openEditForm }"
+              role="switch"
+              aria-checked="false"
+              (click)="toggleEditForm()"
+            >
+              <span
+                aria-hidden="true"
+                class="inline-block w-5 h-5 transition duration-200 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none ring-0"
+                [ngClass]="{ 'translate-x-5': openEditForm }"
+              ></span>
+            </button>
+            <span class="ml-3 text-sm text-gray-600"> {{ 'editMode' | translate }} </span>
+          </div>
+        </div>
+      </div>
+      <div class="text-sm text-gray-500">
+        {{ 'UserPersonalInfoText1' | translate }} <br />
+        {{ 'UserPersonalInfoText2' | translate }}
+      </div>
+    </div>
+    <div class="flex flex-col space-y-12 sm:space-x-12 sm:flex-row sm:space-y-0">
+      <div class="flex flex-col w-full space-y-8 sm:w-2/5">
+        <ng-container *ngIf="fetchedUser && !openEditForm">
+          <div
+            class="flex flex-col items-center w-full py-4 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg bg-white"
+          >
+            <div class="mb-2 text-sm text-gray-600">{{ fetchedUser.foreName }} {{ fetchedUser.surnames }}</div>
+            <div class="mb-2 text-sm text-gray-600">{{ fetchedUser.maritalStatus | lowercase | translate }}</div>
+            <div class="mb-2 text-sm text-gray-600">NID/{{ fetchedUser.documentNumber }}</div>
+            <div class="mb-2 text-sm text-gray-600">{{ user.email }}</div>
+            <div class="mb-2 text-sm text-gray-600">{{ user?.phoneNumber }}</div>
+            <div class="mb-2 text-sm text-gray-600">{{ fetchedUser.dateOfBirth }}</div>
+            <div class="mb-2 text-sm text-gray-600">{{ genders[fetchedUser.sex] | lowercase | translate }}</div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="openEditForm">
+          <div
+            class="flex flex-col items-center w-full py-4 px-4 lg:px-8 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg bg-white"
+          >
+            <form class="flex flex-col w-full space-y-6" [formGroup]="updateForm">
+              <div class="flex flex-col w-full space-y-2">
+                <label for="phone" class="block text-sm font-medium leading-6 text-gray-600">{{
+                  'phoneNumber' | translate
+                }}</label>
+                <div class="relative flex items-center">
+                  <input
+                    formControlName="phoneNumber"
+                    appAllowNumber
+                    type="text"
+                    placeholder="{{ 'phoneNumberPlaceholder' | translate }}"
+                    class="block w-full rounded-md border-0 py-2.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              <div class="flex flex-col w-full space-y-2">
+                <label for="phone" class="block text-sm font-medium leading-6 text-gray-600">{{
+                  'email' | translate
+                }}</label>
+                <div class="relative flex items-center">
+                  <input
+                    formControlName="email"
+                    type="text"
+                    placeholder="{{ 'emailPlaceholder' | translate }}"
+                    class="block w-full rounded-md border-0 py-2.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              <div class="mt-4 border-b border-gray-200 mb-9"></div>
+              <div class="flex justify-end space-x-5">
+                <div>
+                  <ng-container *ngIf="updating">
+                    <button
+                      disabled
+                      type="button"
+                      class="w-full h-10 px-4 text-center text-white rounded-lg bg-primary"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        role="status"
+                        class="inline w-4 h-4 mr-3 text-white animate-spin"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="#E5E7EB"
+                        ></path>
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentColor"
+                        ></path>
+                      </svg>
+                      {{ 'updating' | translate }}
+                    </button>
+                  </ng-container>
+                  <ng-container *ngIf="!updating">
+                    <button
+                      (click)="updateUser()"
+                      [disabled]="updateForm.invalid"
+                      type="submit"
+                      class="w-full h-10 px-4 text-white rounded-lg bg-primary disabled:bg-primary"
+                    >
+                      {{ 'updateButton' | translate }}
+                    </button>
+                  </ng-container>
+                </div>
+              </div>
+            </form>
+          </div>
+        </ng-container>
+        <div class="flex flex-col w-full shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg bg-white">
+          <div class="flex items-center w-full px-4 py-4 border-b border-gray-200 rounded-t-lg sm:px-3">
+            <div class="bg-sky-100 p-1 mr-3.5 rounded-full">
+              <div class="p-1 bg-sky-200 rounded-full">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-4 h-4 text-primary"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                  />
+                </svg>
+              </div>
+            </div>
+            <p class="text-base font-semibold leading-6 text-gray-600">{{ 'jurisdictionDetails' | translate }}</p>
+          </div>
+
+          <div class="px-4 py-4" *ngIf="userLocation">
+            <ng-container *ngIf="userLocation?.provinceName && user.jurisdiction !== EJurisdiction.NATIONAL">
+              <p class="mb-1 text-2xl font-semibold text-gray-800">
+                {{ userLocation.provinceName | lowercase | translate | titlecase }}
+              </p>
+            </ng-container>
+
+            <ng-container *ngIf="user.jurisdiction === EJurisdiction.NATIONAL">
+              <p class="mb-1 text-2xl font-semibold text-gray-800">{{ 'nationWide' | translate }}</p>
+            </ng-container>
+
+            <p class="text-gray-500">
+              <ng-container *ngIf="userLocation?.districtName">
+                <span class="mr-1.5">{{ userLocation.districtName }}</span>
+              </ng-container>
+              <ng-container *ngIf="userLocation?.sectorName">
+                <span class="mr-1.5 ml-1.5">/{{ userLocation.sectorName }}</span>
+              </ng-container>
+              <ng-container *ngIf="userLocation?.cellName"
+                ><span class="mr-1.5 ml-1.5">/{{ userLocation.cellName }}</span></ng-container
+              >
+              <ng-container *ngIf="userLocation?.villageName"
+                >/<span class="ml-1.5">{{ userLocation.villageName }}</span></ng-container
+              >
+            </p>
+          </div>
+          <div class="px-4 py-4 flex flex-col" *ngIf="!userLocation">
+            <div class="flex">
+              <p class="leading-relaxed mb-3 w-24 h-6 animate-pulse bg-gray-100"></p>
+            </div>
+            <div class="flex gap-2">
+              <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+              <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+              <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+              <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col w-full p-8 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg bg-white">
+        <app-change-password [isLoggedin]="true" [username]="this.loggedInUser?.username"></app-change-password>
+      </div>
+    </div>
+  </div>
+</div>

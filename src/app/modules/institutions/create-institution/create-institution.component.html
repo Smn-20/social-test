@@ -1,0 +1,65 @@
+<div class="">
+  <div class="flex justify-between items-center px-12">
+    <h1 class="text-lg font-semibold pt-7">
+      {{ data?.id ? ('updateInstitution' | translate) : ('newInstitution' | translate) }}
+    </h1>
+    <div class="pt-7 sm:block">
+      <button
+        type="button"
+        class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        (click)="close()"
+      >
+        <span class="sr-only">{{'appClose' | translate}}</span> 
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="m-auto items-center my-6 w-full px-12">
+    <div class="">
+      <div>
+        <label class="block text-sm font-medium leading-6 text-gray-600">{{'institutionName' | translate}}:</label>
+        <input
+          [(ngModel)]="institutionName"
+          type="text"
+          placeholder="{{ 'institutionNamePlaceholder' | translate }}"
+          class="w-full rounded border-0 ring-1 ring-inset ring-gray-300 py-2.5 text-gray-500 shadow-sm outline-none placeholder:text-gray-400 sm:text-sm sm:leading-6 mb-6"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium leading-6 text-gray-600">{{'institutionDescription' | translate}}:</label>
+        <textarea
+        [(ngModel)]="institutionDescription" 
+          class="block w-full rounded-md border-0 py-1.5 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 mb-6"
+          rows="4"
+          placeholder="{{ 'institutionDescriptionPlaceholder' | translate }}"
+        ></textarea>
+      </div>
+    </div>
+    <div class="flex justify-center sm:justify-end items-center">
+      <button
+        (click)="close()"
+        class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white font-semibold text-sm mr-4"
+      >
+        {{'cancelButton' | translate}}
+      </button>
+      <button
+        (click)="createOrUpdateInstitution()"
+        class="px-4 py-2.5 text-white rounded-lg bg-primary font-semibold text-sm"
+      >
+        {{ data?.id ? ('updateButton' | translate) : ('submitButton' | translate)}}
+      </button>
+      
+    </div>
+  </div>
+</div>

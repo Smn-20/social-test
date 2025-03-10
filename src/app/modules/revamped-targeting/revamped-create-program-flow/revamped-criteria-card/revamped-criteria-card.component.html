@@ -1,0 +1,75 @@
+<div
+  *ngIf="criteria"
+  class="flex flex-col w-full h-full px-4 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg py-4 space-y-2 bg-white"
+>
+  <div class="w-auto">
+    <mat-chip-listbox aria-label="Criteria Details">
+      <mat-chip-option selected>
+        {{ criteria.applies_to | removeUnderscore | uppercase }}
+      </mat-chip-option>
+      <mat-chip-option selected>
+        {{ criteria.must_meet | removeUnderscore | uppercase }}
+      </mat-chip-option>
+    </mat-chip-listbox>
+    <p class="text-sm font-medium leading-6 text-gray-600 my-3 line-clamp-3 md:line-clamp-4">
+      {{ criteria.criteria_statement }}
+    </p>
+  </div>
+  <div
+    *ngIf="roughConditions.length <= 0"
+    class="rounded-lg bg-slate-400/10 min-h-[10vh] flex items-center gap-3"
+    [class]="roughConditions.length <= 0 ? 'justify-center' : 'justify-start'"
+  >
+    <button
+      (click)="toggleAddConditionModal()"
+      class="px-4 w-auto py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-4 h-4 mr-3"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      {{ 'addCondition' | translate }}
+    </button>
+  </div>
+  <div
+    *ngIf="roughConditions.length > 0"
+    class="rounded-lg min-h-[10vh] flex items-center gap-3 flex-wrap"
+    [class]="roughConditions.length <= 0 ? 'justify-center' : 'justify-start'"
+  >
+    <ng-container *ngFor="let condition of roughConditions; let i = index">
+      <app-revamped-condition
+        [isSmallCard]="true"
+        [condition]="condition"
+        [isStringArray]="true"
+        [showStatus]="true"
+        [showRemoveButton]="true"
+        [elpsisNo]="20"
+        [editable]="true"
+        [hideActionButtons]="false"
+        (removeEvent)="removeCriteriaCondition($event)"
+      ></app-revamped-condition>
+    </ng-container>
+    <button
+      (click)="toggleAddConditionModal(criteria)"
+      class="px-4 w-auto py-2.5 ml-4 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-4 h-4 mr-3"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      {{ 'more' | translate }}
+    </button>
+  </div>
+</div>

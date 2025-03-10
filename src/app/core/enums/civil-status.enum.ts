@@ -1,0 +1,8 @@
+export enum ECivilStatus {
+    MARRIED = 'MARRIED',
+    SINGLE = 'SINGLE',
+    DIVORCED = 'DIVORCED',
+    WIDOW = 'WIDOW',
+    COHABITATION = 'COHABITATION',
+    SEPARATED = 'SEPARATED',
+}

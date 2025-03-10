@@ -1,0 +1,82 @@
+<div class="flex flex-col py-4 space-y-3" *ngIf="program?.programName">
+  <div class="flex flex-col space-y-1 text-sm">
+    <p class="text-gray-500">
+      {{ 'programName' | translate }}: <span class="font-medium">{{ program.programName }}</span>
+    </p>
+    <p class="text-gray-500">
+      {{ 'selectedCutoff' | translate }}: <span class="font-medium">{{ program.cutOff.cutoffName }}</span>
+    </p>
+    <p class="text-gray-500" *ngIf="program.institutionId && program.institutionId.name">
+      {{ 'institutions' | translate }}: <span class="font-medium">{{ program.institutionId.name }}</span>
+    </p>
+    <p class="text-gray-500">
+      {{ 'matchAllGroups' | translate }}:
+      <span class="font-medium">{{ program.matchAllGroups ? ('yes' | translate) : ('no' | translate) }}</span>
+    </p>
+  </div>
+  <div class="flex flex-col gap-2" *ngIf="program.excludedProgramIds?.length > 0">
+    <p class="mb-1 text-base font-medium text-gray-800">{{ 'excludedPrograms' | translate }}</p>
+    <div class="flex gap-4">
+      <ng-container *ngFor="let prog of program.excludedProgramIds">
+        <mat-chip class="!bg-gray-200 !border-gray-200">
+          <div class="flex space-x-2">
+            <span class="font-medium text-gray-600">{{ prog.name }}</span>
+          </div>
+        </mat-chip>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-2" *ngIf="program.includedProgramIds?.length > 0">
+    <p class="mb-1 text-base font-medium text-gray-800">{{ 'includedPrograms' | translate }}</p>
+    <div class="flex gap-4">
+      <ng-container *ngFor="let prog of program.includedProgramIds">
+        <mat-chip class="!bg-gray-200 !border-gray-200">
+          <div class="flex space-x-2">
+            <span class="font-medium text-gray-600">{{ prog.name }}</span>
+          </div>
+        </mat-chip>
+      </ng-container>
+    </div>
+  </div>
+</div>
+<h4 class="text-base font-semibold mt-4">{{ 'targetGroupName' | translate }}</h4>
+<div
+  class="flex flex-col mt-4 w-full shadow py-4 h-full sm:rounded-lg px-4 space-y-4 mx-0 my-4'"
+  *ngIf="selectedTargetGroups.length > 0 && !programDataLoading"
+>
+  <ng-container *ngFor="let targ of selectedTargetGroups; let i = index">
+    <app-target-group-category
+      [showStatus]="true"
+      [isPreview]="true"
+      [openEditForm]="false"
+      [hideRemoveButton]="true"
+      [hideCanceButton]="true"
+      [editable]="false"
+      [targetGroupCategory]="targ"
+      [hideActionButtons]="hideActionButtons"
+      [index]="i"
+      [elpsisNo]="150"
+    ></app-target-group-category>
+    <hr class="bg-gray-200" />
+    <h4 class="text-base font-semibold">{{ 'category' | translate }}</h4>
+    <ng-container *ngIf="targ.categories && targ?.categories.length > 0">
+      <div class="flex flex-col w-full" *ngFor="let cat of targ.categories; let j = index">
+        <app-target-group
+          [openEditForm]="!cat.name"
+          [targetGroup]="cat"
+          [showStatus]="true"
+          [index]="j"
+          [editable]="false"
+          [criteriaConfig]="{
+            editable: false,
+            showRemoveButton: false,
+            showStatus: true,
+            isStringArray: true,
+            hideActionButtons: hideActionButtons
+          }"
+        ></app-target-group>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>

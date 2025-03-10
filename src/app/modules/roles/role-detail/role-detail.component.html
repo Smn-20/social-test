@@ -1,0 +1,350 @@
+<ng-container *ngIf="!!role">
+  <div class="flex justify-end mb-5">
+    <ng-container *ngIf="role.state !== EState.DELETED">
+      <div class="flex items-center" appAccessControl [permissions]="[EPermission.UPDATE_SYSTEM_USER, EPermission.UPDATE_ROLE]" >
+        <button
+          type="button"
+          class="relative inline-flex flex-shrink-0 h-6 transition-colors duration-200 ease-in-out bg-gray-200 border-2 border-transparent rounded-full cursor-pointer w-11 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          [ngClass]="{ 'bg-primary': openEditRoleForm }"
+          role="switch"
+          aria-checked="false"
+          (click)="toggleEditRoleForm()"
+        >
+          <span
+            aria-hidden="true"
+            class="inline-block w-5 h-5 transition duration-200 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none ring-0"
+            [ngClass]="{ 'translate-x-5': openEditRoleForm }"
+          ></span>
+        </button>
+        <span class="ml-3 text-base text-gray-600"> {{ 'editMode' | translate }} </span>
+      </div>
+    </ng-container>
+  </div>
+  <div class="w-full" *ngIf="!openEditRoleForm">
+    <div class="flex">
+      <div class="ml-0 overflow-hidden text-left transition-all transform bg-white rounded-lg sm:w-full sm:py-6">
+        <div class="flex mt-0">
+          <form class="w-full">
+            <div class="flow-root">
+              <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                  <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
+                    <table class="min-w-full bg-white border-2 divide-y divide-gray-300">
+                      <thead class="bg-white">
+                        <tr>
+                          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                            {{ 'capabilities' | translate }}
+                          </th>
+
+                          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <div class="relative flex items-start">
+                              <div class="flex items-center h-6">
+                                <input
+                                  type="checkbox"
+                                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                  disabled
+                                />
+                              </div>
+                              <div class="ml-3 text-sm leading-6">
+                                <label for="comments" class="font-medium text-gray-900">{{
+                                  'create' | translate
+                                }}</label>
+                              </div>
+                            </div>
+                          </th>
+                          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <div class="relative flex items-start">
+                              <div class="flex items-center h-6">
+                                <input
+                                  type="checkbox"
+                                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                  disabled
+                                />
+                              </div>
+                              <div class="ml-3 text-sm leading-6">
+                                <label for="comments" class="font-medium text-gray-900">{{
+                                  'delete' | translate
+                                }}</label>
+                              </div>
+                            </div>
+                          </th>
+                          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <div class="relative flex items-start">
+                              <div class="flex items-center h-6">
+                                <input
+                                  type="checkbox"
+                                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                  disabled
+                                />
+                              </div>
+                              <div class="ml-3 text-sm leading-6">
+                                <label for="comments" class="font-medium text-gray-900">{{
+                                  'update' | translate
+                                }}</label>
+                              </div>
+                            </div>
+                          </th>
+                          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <div class="relative flex items-start">
+                              <div class="flex items-center h-6">
+                                <input
+                                  type="checkbox"
+                                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                  disabled
+                                />
+                              </div>
+                              <div class="ml-3 text-sm leading-6">
+                                <label for="comments" class="font-medium text-gray-900">{{
+                                  'transfer' | translate
+                                }}</label>
+                              </div>
+                            </div>
+                          </th>
+                          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <div class="relative flex items-start">
+                              <div class="flex items-center h-6">
+                                <input
+                                  type="checkbox"
+                                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                  disabled
+                                />
+                              </div>
+                              <div class="ml-3 text-sm leading-6">
+                                <label for="comments" class="font-medium text-gray-900">{{
+                                  'enable' | translate
+                                }}</label>
+                              </div>
+                            </div>
+                          </th>
+                          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <div class="relative flex items-start">
+                              <div class="flex items-center h-6">
+                                <input
+                                  type="checkbox"
+                                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                  disabled
+                                />
+                              </div>
+                              <div class="ml-3 text-sm leading-6">
+                                <label for="comments" class="font-medium text-gray-900">{{
+                                  'disable' | translate
+                                }}</label>
+                              </div>
+                            </div>
+                          </th>
+                          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <div class="relative flex items-start">
+                              <div class="flex items-center h-6">
+                                <input
+                                  type="checkbox"
+                                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                  disabled
+                                />
+                              </div>
+                              <div class="ml-3 text-sm leading-6">
+                                <label for="comments" class="font-medium text-gray-900">{{ 'view' | translate }}</label>
+                              </div>
+                            </div>
+                          </th>
+                          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <div class="relative flex items-start">
+                              <div class="flex items-center h-6">
+                                <input
+                                  type="checkbox"
+                                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                  disabled
+                                />
+                              </div>
+                              <div class="ml-3 text-sm leading-6">
+                                <label for="comments" class="font-medium text-gray-900">{{
+                                  'archive' | translate
+                                }}</label>
+                              </div>
+                            </div>
+                          </th>
+                          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <div class="relative flex items-start">
+                              <div class="flex items-center h-6">
+                                <input
+                                  type="checkbox"
+                                  class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                                  disabled
+                                />
+                              </div>
+                              <div class="ml-3 text-sm leading-6">
+                                <label for="comments" class="font-medium text-gray-900">{{
+                                  'download' | translate
+                                }}</label>
+                              </div>
+                            </div>
+                          </th>
+                          <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                            <span class="sr-only"></span>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody class="bg-white divide-y divide-gray-200">
+                        <tr *ngFor="let permissions of permissionsMatrix; let i = index">
+                          <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap">
+                            {{ titles[i] }}
+                          </td>
+
+                          <td
+                            class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap"
+                            *ngFor="let permission of permissions"
+                          >
+                            <ng-container *ngIf="!!permission">
+                              <input
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-0 disabled:text-primary"
+                                type="checkbox"
+                                [value]="permission"
+                                (change)="onPermissionChange($event)"
+                                [checked]="isChecked(selectedPermissions, permission)"
+                                disabled
+                              />
+                            </ng-container>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="mt-8 border-b border-gray-200 mb-9"></div>
+    <div class="flex justify-end">
+      <ng-container *ngIf="role?.state === EState.ACTIVE">
+        <button
+          appAccessControl
+          [permissions]="[EPermission.DISABLE_ROLE]" 
+          class="px-4 py-2.5 rounded-lg bg-primary text-white flex items-center justify-center font-semibold text-sm mr-8 h-10"
+          (click)="disableRole()"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6 mr-2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+
+          {{ isDisabling ? ('loading' | translate) : ('disable' | translate) }}
+        </button>
+      </ng-container>
+      <ng-container *ngIf="role?.state === EState.INACTIVE">
+        <button
+          appAccessControl
+          [permissions]="[EPermission.ENABLE_ROLE]" 
+          class="px-4 py-2.5 rounded-lg bg-green-600 text-white flex items-center justify-center font-semibold text-sm mr-8 h-10"
+          (click)="enableRole()"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6 mr-2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+
+          {{ isDisabling ? ('loading' | translate) : ('enable' | translate) }}
+        </button>
+      </ng-container>
+      <button
+        *ngIf="role.state !== EState.DELETED"
+        appAccessControl
+        [permissions]="[EPermission.DELETE_ROLE]" 
+        class="px-4 py-2.5 text-white rounded-lg bg-red-400 flex items-center justify-center font-semibold text-sm h-10"
+        (click)="toggleDeleteConfirmModal()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-6 h-6 mr-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+          />
+        </svg>
+
+        {{ isDeleting ? ('loading' | translate) : ('delete' | translate) }}
+      </button>
+    </div>
+  </div>
+  <ng-container *ngIf="openEditRoleForm && roleId">
+    <app-edit-role [roleId]="roleId" (closeEditMode)="openEditRoleForm = false; role = ''"></app-edit-role>
+  </ng-container>
+
+  <div
+    class="relative z-50"
+    aria-labelledby="modal-title"
+    role="dialog"
+    aria-modal="true"
+    *ngIf="openDeleteConfirmModal"
+  >
+    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+      <div class="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0">
+        <div
+          class="relative px-4 pt-5 pb-4 space-y-10 overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:w-full sm:max-w-md sm:p-6"
+        >
+          <div>
+            <div class="absolute top-0 right-0 pt-4 pr-4 sm:block">
+              <button
+                type="button"
+                class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                (click)="toggleDeleteConfirmModal()"
+              >
+                <span class="sr-only">{{'appClose' | translate}}</span>
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="text-lg text-gray-600">{{ 'confirmRoleDelete' | translate }} ?</div>
+          <div class="flex justify-end space-x-6">
+            <button
+              class="px-4 py-2.5 rounded-lg bg-white text-gray-600 border border-gray-300 flex items-center justify-center font-semibold text-sm h-10"
+              (click)="toggleDeleteConfirmModal()"
+            >
+              {{ 'cancelButton' | translate }}
+            </button>
+            <button
+              class="px-4 py-2.5 rounded-lg bg-red-400 text-white flex items-center justify-center font-semibold text-sm h-10"
+              (click)="deleteRole()"
+              [disabled]="isDeleting"
+            >
+              {{ isDeleting ? ('loading' | translate) : ('delete' | translate) }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

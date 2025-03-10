@@ -1,0 +1,7 @@
+<div class="flex flex-col space-y-6">
+  <ng-container>
+    <app-jurisdiction [title]="'jurisdictionDetails'"
+      [locationConfig]="{ type: loggedInUser.jurisdiction, id: loggedInUser.locationId }" [showButton]="false"
+      [buttonName]="''" [permissions]="[EPermission.CREATE_HOUSE_HOLD]" (jurisdictionEvent)="{}"></app-jurisdiction>
+  </ng-container>
+</div>

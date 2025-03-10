@@ -1,0 +1,295 @@
+<div
+  class="flex flex-col space-y-6"
+  *ngIf="(!loading && queryFormGroup.invalid) || (isSearching && queryFormGroup.valid) || !loading"
+>
+  <div class="flex flex-col space-y-3 md:space-y-0 md:flex-row md:justify-between md:items-center">
+    <form class="w-full md:w-[400px]" [formGroup]="queryFormGroup">
+      <div class="relative w-full mt-2 rounded-md shadow-sm">
+        <input
+          type="text"
+          name="search"
+          class="block w-full rounded-md border-0 py-2.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+          placeholder="Search surveys..."
+          formControlName="query"
+        />
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <ng-container *ngIf="!isSearching">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5 text-gray-400"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+              />
+            </svg>
+          </ng-container>
+          <ng-container *ngIf="isSearching">
+            <app-spinner size="5"></app-spinner>
+          </ng-container>
+        </div>
+      </div>
+    </form>
+
+    <button
+      appAccessControl
+      [permissions]="[EPermission.CREATE_QUESTIONNAIRE]"
+      class="px-4 py-2.5 text-white rounded-lg bg-primary flex items-center font-medium text-sm justify-center"
+      (click)="openNewSurveyDialog(); selectedSurvey = null"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-4 h-4 mr-3"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      {{ 'newSurvey' | translate }}
+    </button>
+  </div>
+  <div *ngIf="surveys.length > 0">
+    <div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+      <div class="px-6 py-5 sm:flex sm:items-center bg-white">
+        <div class="flex">
+          <h1 class="mr-3 text-lg font-semibold leading-6 text-gray-900">{{ 'surveys' | translate }}</h1>
+          <div class="inline-flex items-center justify-center px-2 bg-sky-100 rounded-2xl">
+            <span class="text-xs font-medium text-primary"> {{ totalsurveys }} {{ 'surveys' | translate }} </span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-root">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
+              <table class="min-w-full bg-white divide-y divide-gray-300">
+                <thead class="bg-white">
+                  <tr>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'surveyName' | translate }}
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'status' | translate }}
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'createdDate' | translate }}
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"></th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <ng-container *ngFor="let survey of surveys; let i = index">
+                    <tr class="cursor-pointer">
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        {{ survey.name | titlecase }}
+                      </td>
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        <ng-container *ngIf="survey.status === EState.ACTIVE">
+                          <div class="inline-flex justify-center items-center bg-green-100 py-0.5 px-2 rounded-2xl">
+                            <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+                            <span class="text-xs font-medium text-green-600">{{ 'statusActive' | translate }}</span>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="survey.status === EState.INACTIVE">
+                          <div class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl">
+                            <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+                            <span class="text-xs font-medium text-red-600">{{ 'statusInactive' | translate }}</span>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="survey.status === EState.ARCHIVED">
+                          <div class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl">
+                            <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+                            <span class="text-xs font-medium text-red-600">{{ 'archived' | translate }}</span>
+                          </div>
+                        </ng-container>
+                      </td>
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ survey.createdAt | date }}</td>
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        <div class="flex flex-row space-x-4">
+                          <i-feather
+                            [matTooltip]="'matTooltipEditSurvey' | translate"
+                            appAccessControl
+                            [permissions]="[EPermission.CREATE_QUESTIONNAIRE, EPermission.UPDATE_QUESTIONNAIRE]"
+                            (click)="toggleUpdateSurvey(survey)"
+                            name="edit"
+                            class="w-4 h-4 pointer-cursor"
+                          ></i-feather>
+
+                          <ng-container *ngIf="loadingAction !== survey.id">
+                            <a
+                              [matTooltip]="'matTooltipArchiveSurvey' | translate"
+                              appAccessControl
+                              [permissions]="[EPermission.CREATE_QUESTIONNAIRE, EPermission.DELETE_QUESTIONNAIRE]"
+                              *ngIf="survey.status === EState.ACTIVE"
+                              class="pointer-cursor"
+                              (click)="$event.stopPropagation(); toggleAction('archive', survey)"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                class="w-6 h-6 mr-2"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                />
+                              </svg>
+                            </a>
+                            <a
+                              *ngIf="survey.status === EState.INACTIVE"
+                              [matTooltip]="'matTooltipActivateSurvey' | translate"
+                              class="pointer-cursor"
+                              (click)="$event.stopPropagation(); toggleAction('enable', survey)"
+                            >
+                              <i-feather class="w-6 h-6 mr-2" name="check-circle"></i-feather>
+                            </a>
+                          </ng-container>
+                          <app-spinner *ngIf="loadingAction === survey.id" size="5"></app-spinner>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <mat-paginator
+        [length]="totalsurveys"
+        [pageSize]="pagination.size"
+        [pageIndex]="pagination.page"
+        (page)="onPageChange($event)"
+        aria-label="select"
+      >
+      </mat-paginator>
+    </div>
+  </div>
+</div>
+
+<!-- New questionnaire Modal -->
+<div class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true" *ngIf="isSurveyDialogOpen">
+  <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+
+  <div class="fixed inset-0 z-30 overflow-y-auto">
+    <div class="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0">
+      <div
+        class="ml-0 overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl sm:w-full sm:max-w-lg md:max-w-xl sm:px-11 sm:py-7"
+      >
+        <div>
+          <h1 class="absolute top-0 left-0 text-lg font-semibold pt-5 pl-11">
+            {{ selectedSurvey?.id ? ('newSurvey' | translate) : ('newSurvey' | translate) }}
+          </h1>
+          <div class="absolute top-0 right-0 hidden pt-7 pr-11 sm:block">
+            <button
+              type="button"
+              class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              (click)="openNewSurveyDialog()"
+            >
+              <span class="sr-only">Close</span>
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="flex mt-10">
+          <form class="w-full h-auto" [formGroup]="surveyFormGroup">
+            <!-- Start create of new survey -->
+            <div class="flex mb-5 space-x-4">
+              <div class="w-full">
+                <div class="flex flex-col justify-between">
+                  <div class="w-full">
+                    <label for="Survey name" class="block text-sm font-medium leading-6 text-gray-600">{{
+                      'newSurvey' | translate
+                    }}</label>
+                    <div class="mt-2">
+                      <textarea
+                        id="essay"
+                        name="essay"
+                        formControlName="name"
+                        cols="5"
+                        class="form-input block w-full h-[100px] rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 appearance-none"
+                        placeholder="{{ 'surveyNamePlaceholder' | translate }}"
+                        [class]="formControls['name'].touched && formControls['name'].errors ? 'invalid-feedback' : ''"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end mt-8">
+              <button
+                class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white flex items-center justify-center font-semibold text-sm mr-10 w-28 h-10"
+                (click)="openNewSurveyDialog()"
+              >
+                {{ 'cancelButton' | translate }}
+              </button>
+              <button
+                [disabled]="surveyFormGroup.invalid || isSubmitting"
+                (click)="createSurvey()"
+                class="px-4 py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm w-28 h-10"
+              >
+                <ng-container *ngIf="isSubmitting">
+                  <svg
+                    aria-hidden="true"
+                    role="status"
+                    class="inline w-4 h-4 mr-3 text-white animate-spin"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="#E5E7EB"
+                    ></path>
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentColor"
+                    ></path>
+                  </svg>
+                  {{ selectedSurvey?.id ? ('updating' | translate) : ('submitting' | translate) }}
+                </ng-container>
+                <ng-container *ngIf="!isSubmitting">
+                  {{ selectedSurvey?.id ? ('update' | translate) : ('submitButton' | translate) }}
+                </ng-container>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- End of Role modal -->
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="!loading && surveys?.length === 0">
+  <div class="flex items-center justify-center w-full mt-4">
+    <div class="w-[800px]">
+      <app-not-found (refreshEvent)="receiveRefresh($event)"></app-not-found>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="loading">
+  <app-table-shimmer [searchSkeleton]="true" [buttonNumber]="1" [cols]="2" [rows]="6"></app-table-shimmer>
+</ng-container>

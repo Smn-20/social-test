@@ -1,0 +1,124 @@
+<div class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+
+  <div class="fixed inset-0 z-30 overflow-y-auto h-auto">
+    <div class="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0 w-auto mx-auto">
+      <div
+        class="relative py-5 overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl px-7 sm:w-full sm:max-w-lg md:max-w-2xl lg:max-w-3xl xl:max-w-5xl sm:px-11 sm:py-7"
+      >
+        <div>
+          <h1 class="absolute top-0 left-0 text-lg font-semibold pt-7 pl-11">
+            {{ 'addCriteria' | translate }}
+          </h1>
+          <div class="absolute top-0 right-0 pt-7 pr-11 sm:block">
+            <button
+              type="button"
+              class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              (click)="close(true)"
+            >
+              <span class="sr-only">{{'appClose' | translate}}</span>
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-col mt-10">
+          <form class="w-full flex-col space-y-6" [formGroup]="criteriaFormGroup">
+            <div class="flex flex-col sm:space-y-6 items-center justify-between">
+              <div class="flex w-full space-x-10 justify-center items-center">
+                <div class="flex flex-col w-full space-y-2">
+                  <label for="appliesTo" class="block text-sm font-medium leading-6 text-gray-600"
+                    >{{ 'appliesTo' | translate }}
+                  </label>
+                  <ng-select
+                    formControlName="appliesTo"
+                    placeholder="{{ 'appliesTo' | translate }}"
+                    [items]="appliesCategories"
+                    bindLabel="label"
+                    bindValue="value"
+                    [appendTo]="'body'"
+                    [clearable]="false"
+                    [class]="
+                      formControls['appliesTo'].touched && formControls['appliesTo'].errors
+                        ? 'form-control invalid-feedback'
+                        : 'form-control'
+                    "
+                  ></ng-select>
+                </div>
+                <div class="flex flex-col w-full space-y-2">
+                  <label for="mustMeet" class="block text-sm font-medium leading-6 text-gray-600"
+                    >{{ 'mustMeet' | translate }}
+                  </label>
+                  <ng-select
+                    formControlName="mustMeet"
+                    [items]="mustMeetCategories"
+                    placeholder="{{ 'mustMeet' | translate }}"
+                    bindLabel="label"
+                    bindValue="value"
+                    [appendTo]="'body'"
+                    [clearable]="false"
+                    [class]="
+                      formControls['mustMeet'].touched && formControls['mustMeet'].errors
+                        ? 'form-control invalid-feedback'
+                        : 'form-control'
+                    "
+                  ></ng-select>
+                </div>
+              </div>
+              <div class="flex w-full space-x-10 justify-center items-center">
+                <div class="flex flex-col w-full space-y-2">
+                  <label for="criteriaStatement" class="block text-sm font-medium leading-6 text-gray-600">{{
+                    'criteriaStatement' | translate
+                  }}</label>
+                  <textarea
+                    rows="4"
+                    class="w-full resize-none block rounded-md text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 appearance-none"
+                    formControlName="criteriaStatement"
+                    placeholder="{{ 'criteriaStatementPlaceholder' | translate }}"
+                    [class]="
+                      formControls['criteriaStatement'].touched && formControls['criteriaStatement'].errors
+                        ? 'border-red-400'
+                        : 'border-0'
+                    "
+                  ></textarea>                
+                </div>
+              </div>
+            </div>
+            <div class="flex w-full justify-end">
+              <button
+                class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white flex items-center justify-center font-semibold text-sm mr-10 w-28 h-10"
+                (click)="close(true)"
+              >
+                {{ 'cancelButton' | translate }}
+              </button>
+              <button
+                (click)="close(false)"
+                class="px-4 w-auto py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-4 h-4 mr-3"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                {{ 'saveButton' | translate }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

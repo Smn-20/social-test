@@ -1,0 +1,25 @@
+export enum EOperations {
+    EQUAL = 'EQUAL',
+    NOT_EQUAL = 'NOT_EQUAL',
+    GREATER_THAN = 'GREATER_THAN',
+    GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
+    LESS_THAN = 'LESS_THAN',
+    LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
+    IN = 'IN',
+}
+
+export enum EDataType {
+    GREATER = 'GREATER',
+    RANGE = 'RANGE',
+    LESS = 'LESS',
+    GREATER_OR_EQUAL = 'GREATER_OR_EQUAL',
+    LESS_OR_EQUAL = 'LESS_OR_EQUAL',
+    GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
+    LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
+    EQUAL = 'EQUAL',
+}
+
+export enum EScoreType {
+    PERCENTAGE = 'PERCENTAGE',
+    NUMBER = 'NUMBER',
+}

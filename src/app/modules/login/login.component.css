@@ -1,0 +1,11 @@
+.loginbackground {
+    background-image: linear-gradient(152deg, #058ccc 17.52%, rgba(5, 140, 204, 0.40) 198.57%, rgba(5, 140, 204, 0.00) 229.6%);
+    /* width: 1512px; */
+/* height: 982px; */
+/* flex-shrink: 0; */
+}
+
+.iconsizes {
+    width: 16px;
+    height: 16px;
+}

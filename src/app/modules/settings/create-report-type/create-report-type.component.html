@@ -1,0 +1,210 @@
+<div class="flex w-full flex-col">
+  <div class="flex items-center justify-end mb-4" *ngIf="editable"
+  appAccessControl
+  [permissions]="[EPermission.UPDATE_REPORT_TYPE]" 
+  >
+    <button
+      type="button"
+      class="relative inline-flex flex-shrink-0 h-6 transition-colors duration-200 ease-in-out bg-gray-200 border-2 border-transparent rounded-full cursor-pointer w-11 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+      [ngClass]="{ 'bg-primary': showForm }"
+      role="switch"
+      aria-checked="false"
+      (click)="toggleShowForm()"
+    >
+      <span
+        aria-hidden="true"
+        class="inline-block w-5 h-5 transition duration-200 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none ring-0"
+        [ngClass]="{ 'translate-x-5': showForm }"
+      ></span>
+    </button>
+    <span class="ml-3 text-sm text-gray-600"> {{ 'editMode' | translate }} </span>
+  </div>
+  <form class="w-full" [formGroup]="reportModelForm">
+    <div class="flex flex-col space-y-6">
+      <div class="flex flex-col space-y-6 sm:flex-row sm:space-x-10 sm:space-y-0">
+        <div class="flex flex-col w-full space-y-2">
+          <label for="first-name" class="block text-sm font-medium leading-6 text-gray-600"> {{'reportTypes' | translate}} </label>
+          <ng-container *ngIf="showForm">
+            <input
+              type="text"
+              formControlName="reportType"
+              placeholder=" {{'reportTypePlaceholder' | translate}}"
+              class="block w-full rounded-md border-0 py-2.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+              [class]="
+                formControls['reportType'].touched && formControls['reportType'].errors
+                  ? 'form-control invalid-feedback'
+                  : 'form-control'
+              "
+            />
+          </ng-container>
+          <ng-container
+            [ngTemplateOutlet]="showVal"
+            [ngTemplateOutletContext]="{ val: formControls['reportType'].value }"
+          >
+          </ng-container>
+        </div>
+        <div class="flex flex-col w-full space-y-2">
+          <label for="first-name" class="block text-sm font-medium leading-6 text-gray-600"> {{'description' | translate}}</label>
+          <ng-container *ngIf="showForm">
+            <input
+              type="text"
+              formControlName="description"
+              placeholder="{{'enterDescriptionPlaceholder' | translate}}"
+              class="block w-full rounded-md border-0 py-2.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+              [class]="
+                formControls['description'].touched && formControls['description'].errors
+                  ? 'form-control invalid-feedback'
+                  : 'form-control'
+              "
+            />
+          </ng-container>
+          <ng-container
+            [ngTemplateOutlet]="showVal"
+            [ngTemplateOutletContext]="{ val: formControls['description'].value }"
+          >
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col w-full mt-6">
+      <div class="flex flex-col w-full space-y-2">
+        <label for="first-name" class="block text-sm font-medium leading-6 text-gray-600"> {{'query' | translate}}</label>
+        <ng-container *ngIf="showForm">
+          <textarea
+            class="block w-full rounded-md border-0 py-1.5 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+            rows="3"
+            placeholder="{{'enterQueryCodePlaceholder' | translate}}"
+            formControlName="query"
+            [class]="formControls['query'].touched && formControls['query'].errors ? 'invalid-feedback' : ''"
+          ></textarea>
+        </ng-container>
+        <ng-container [ngTemplateOutlet]="showVal" [ngTemplateOutletContext]="{ val: formControls['query'].value }">
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="flex flex-col w-full mt-6">
+      <div class="flex flex-col w-full space-y-2">
+        <label for="first-name" class="block text-sm font-medium leading-6 text-gray-600"> {{'queryWithFilters' | translate}}</label>
+        <ng-container *ngIf="showForm">
+          <textarea
+            class="block w-full rounded-md border-0 py-1.5 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+            rows="3"
+            placeholder="{{'enterQueryCodePlaceholder' | translate}}"
+            formControlName="queryWithFilters"
+            [class]="
+              formControls['queryWithFilters'].touched && formControls['queryWithFilters'].errors
+                ? 'invalid-feedback'
+                : ''
+            "
+          ></textarea>
+        </ng-container>
+        <ng-container
+          [ngTemplateOutlet]="showVal"
+          [ngTemplateOutletContext]="{ val: formControls['queryWithFilters'].value }"
+        >
+        </ng-container>
+      </div>
+    </div>
+
+    <h1 class="text-base font-medium mt-6 mb-2">{{'headers' | translate}}</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" *ngIf="headers.length === 1 && showForm">
+      <input
+        type="text"
+        [(ngModel)]="headers[0]"
+        [ngModelOptions]="{ standalone: true }"
+        placeholder=" {{'enterHeaders' | translate}}"
+        class="form-control block w-full rounded-md border-0 py-2.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+      />
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <ng-container *ngIf="headers.length > 1">
+        <ng-container *ngFor="let h of headers; let i = index; trackBy: trackByFn">
+          <div
+            class="flex w-full py-2.5 px-2.5 items-center bg-white shadow-md rounded-sm justify-between"
+            *ngIf="(h !== '' && editingForm !== i) || (h && !showForm)"
+          >
+            <span>{{ h }}</span>
+            <div class="flex space-x-3" *ngIf="showForm">
+              <i-feather class="h-4 w-4 cursor-pointer" (click)="remove(i)" name="trash-2"></i-feather>
+              <i-feather class="h-4 w-4 cursor-pointer" (click)="formIsEditing(i)" name="edit"></i-feather>
+            </div>
+          </div>
+          <input
+            *ngIf="(h === '' || editingForm === i) && showForm"
+            type="text"
+            [(ngModel)]="headers[i]"
+            (ngModelChange)="formIsEditing(i)"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder=" {{'enterHeaders' | translate}}"
+            class="form-control block w-full rounded-md border-0 py-2.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+          />
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <ng-container *ngIf="showForm">
+      <div class="flex w-full justify-end mt-6">
+        <button
+          (click)="toggleShowNewHeaderForm()"
+          class="px-4 w-auto py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-4 h-4 mr-3"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          {{'addHeader' | translate}}
+        </button>
+      </div>
+
+      <div class="flex justify-center mt-8 md:justify-end">
+        <button
+          class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white flex items-center justify-center font-semibold text-sm mr-10 w-28 h-10"
+          (click)="close()"
+        >
+          {{ 'cancelButton' | translate }}
+        </button>
+        <button
+          (click)="submit()"
+          [disabled]="loading"
+          class="px-4 w-auto py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm h-10"
+        >
+          <ng-container *ngIf="loading">
+            <ng-container [ngTemplateOutlet]="spinner"> </ng-container>
+          </ng-container>
+          {{ reportModel?.reportType ? ('updateButton' | translate) : ('submitButton' | translate) }}
+        </button>
+      </div>
+    </ng-container>
+  </form>
+</div>
+
+<ng-template #spinner>
+  <svg
+    aria-hidden="true"
+    role="status"
+    class="inline w-4 h-4 mr-3 text-white animate-spin"
+    viewBox="0 0 100 101"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+      fill="#E5E7EB"
+    ></path>
+    <path
+      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+      fill="currentColor"
+    ></path>
+  </svg>
+</ng-template>
+
+<ng-template #showVal let-val="val">
+  <span *ngIf="!showForm">{{ val || 'N/A' }}</span>
+</ng-template>

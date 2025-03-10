@@ -1,0 +1,18 @@
+<div
+  class="flex gap-1 w-full h-5 px-5 py-4 items-center z-40 bg-gray-100 lg:px-8 shadow-md border-b text-gray-500 text-xs"
+>
+  <ng-container>
+    <i-feather name="home" class="text-gray-400" style="width: 14px; margin-top: 8px"></i-feather>
+    <a [routerLink]="'/admin/dashboard'">SR-IS</a>
+  </ng-container>
+
+  <ng-container *ngIf="breadcrumb?.current && breadcrumb?.link">
+    <i-feather name="chevron-right" class="text-gray-400" style="width: 14px; margin-top: 8px"></i-feather>
+    <a [routerLink]="breadcrumb.link">{{ breadcrumb.name }}</a>
+  </ng-container>
+
+  <ng-container *ngIf="currentChildren?.current">
+    <i-feather name="chevron-right" class="text-gray-400" style="width: 14px; margin-top: 8px"></i-feather>
+    <a [routerLink]="currentChildren.link">{{ currentChildren.name }}</a>
+  </ng-container>
+</div>

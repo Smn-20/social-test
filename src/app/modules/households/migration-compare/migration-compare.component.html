@@ -1,0 +1,288 @@
+<div class="flex flex-col space-y-6">
+
+  <div class="flex flex-col w-full shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:mt-0 bg-white" *ngIf="!misLoading && !srisLoading  && (misHead || srisHead)">
+    <div
+      class="flex items-center justify-between w-full px-4 py-4 bg-white border-b border-gray-200 rounded-t-lg sm:px-3"
+    >
+      <div class="flex items-center gap-4">
+        <div class="bg-sky-100 p-1 mr-2 rounded-full">
+          <div class="p-1 bg-sky-200 rounded-full cursor-pointer" routerLink="/admin/households/migration">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M13.3334 8H2.66675M2.66675 8L6.66675 12M2.66675 8L6.66675 4"
+                stroke="#058ccc"
+                stroke-width="1.33333"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+        <p class="text-base font-semibold leading-6 text-gray-600">
+          {{ 'household' | translate }} - {{rsisHouseholdData?.lodaCode || misHead?.lodaHouseholdCode}}
+        </p>
+
+        <div class="flex gap-4 pl-2">
+          <div [ngClass]="{'bg-green-200 text-green-700': rsisHouseholdData, 'bg-red-200 text-red-700': !rsisHouseholdData}" class="flex items-center p-1 rounded-full" >
+            <div [ngClass]="{'bg-green-300': rsisHouseholdData, 'bg-red-300': !rsisHouseholdData}" class="flex items-center p-1 justify-center rounded-full">
+              <i-feather [name]="rsisHouseholdData ? 'check' : 'x' " style="height: 10px; width: 10px;"
+              ></i-feather>
+            </div>
+            <span class="text-xs px-2">SR-IS</span>
+          </div>
+
+          <div [ngClass]="{'bg-green-200 text-green-700': misHead, 'bg-red-200 text-red-700': !misHead}" class="flex items-center p-1 rounded-full" >
+            <div [ngClass]="{'bg-green-300': misHead, 'bg-red-300': !misHead}" class="flex items-center p-1 justify-center rounded-full">
+              <i-feather [name]="misHead ? 'check' : 'x' " style="height: 10px; width: 10px;"
+              ></i-feather>
+            </div>
+            <span class="text-xs px-2">MEIS</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="grid grid-cols-1 items-end md:grid-cols-3 gap-4 p-4">
+      <div class="w-full">
+        <app-user-info [isCompact]="false" [user]="(srisHead ? srisHead : misHead)" [photo]="headPhoto"></app-user-info>
+      </div>
+      <div class="w-full">
+        <app-jurisdiction
+        [title]="'householdLocation'"
+        [isCompact]="true"
+        [locationConfig]="{ type: EJurisdiction.VILLAGE, id: misHead ? misHead.villageId : this.rsisHouseholdData.villageId }"
+      ></app-jurisdiction>
+      </div>
+      <div class="flex flex-col gap-8 w-full">
+
+        <ng-container *ngIf="(misHead && misHead.srisMigrationStatus === ETargetingStatus.FINISHED) &&
+        (rsisHouseholdData && rsisHouseholdData.migrationStatus === ETargetingStatus.FINISHED)">
+              <div  class="flex w-full border-green-700 bg-green-100 rounded-md p-4 space-x-2 z-10">
+                <i-feather class="mt-2 text-green-700 font-semibold" name="check-circle"></i-feather>
+                <div class="flex-col">
+                  <div class="flex space-x-2">
+                    <p class="text-sm font-semibold text-green-700">{{ 'success' | translate }}</p>
+                  </div>
+                  <p class="text-xs text-green-700">
+                    {{ 'householdMigrationCompleted' | translate }}
+                  </p>
+                </div>
+          </div>
+          <div class="w-full flex items-center justify-end" >
+              <button [routerLink]="'/admin/households/details/' + srisHead?.documentNumber || misHead?.nationalId" class="h-[44px] px-4 py-2.5 text-gray-800 rounded-lg bg-white border-2 border-gray-200 flex items-center font-semibold gap-2 text-sm hover:bg-gray-200">
+              <span> {{ 'HouseholdDetails' | translate }}</span>
+              <i-feather name="arrow-right" style="height: 16px; width:16px"></i-feather>
+            </button>
+          </div>
+      </ng-container>
+
+
+      <ng-container *ngIf="(misHead && misHead.srisMigrationStatus !== ETargetingStatus.FINISHED) ||
+       (rsisHouseholdData && rsisHouseholdData.migrationStatus !== ETargetingStatus.FINISHED)">
+          <div class="flex w-full border-yellow-700 bg-yellow-100 rounded-md p-4 space-x-2 z-10"
+        >
+          <i-feather class="mt-2 text-yellow-700 font-semibold" name="alert-triangle"></i-feather>
+          <div class="flex-col">
+            <div class="flex space-x-2">
+              <p class="text-sm font-semibold text-yellow-700">{{ 'warning' | translate }}</p>
+            </div>
+            <p class="text-xs text-yellow-700">
+              {{ 'MISSRIStransferMEssage' | translate }}
+            </p>
+          </div>
+        </div>
+        <div class="w-full flex items-center gap-2">
+          <ng-select
+            class="w-full"
+            [placeholder]="'SelectBetweenMISandRSIS' | translate"
+            [items]="!this.misHead ? srisOnly :  !this.rsisHouseholdData ? misOnly : storageLocations"
+            (change)="toggleMISRSIS($event.value)"
+            bindLabel="name"
+          ></ng-select>
+            <button
+            [disabled]="approveLoading || !selectedStorage"
+            class="px-4 py-2.5 w-fit align-end text-white rounded-lg bg-primary flex items-center font-semibold text-xs md:text-sm"
+            (click)="accept()"
+          >
+          <ng-container *ngIf="approveLoading">
+            <svg
+              aria-hidden="true"
+              role="status"
+              class="inline w-4 h-4 mr-3 text-white animate-spin"
+              viewBox="0 0 100 101"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                fill="#E5E7EB"
+              ></path>
+              <path
+                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </ng-container>
+            {{ 'confirm' | translate }}
+          </button>
+        </div>
+    </ng-container>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col w-full shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:mt-0 bg-white scroll-x-hidden" *ngIf="misLoading || srisLoading">
+    <ng-container >
+      <app-table-shimmer
+        [searchSkeleton]="false"
+        [buttonNumber]="0"
+        [cols]="3"
+        [rows]="1"
+      ></app-table-shimmer>
+    </ng-container>
+  </div>
+
+  <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2" *ngIf="(misHead || srisHead)">
+    <div class="flex flex-col gap-4">
+      <div class="flex justify-between items-center" *ngIf="!srisLoading">
+        <h1 class="mr-3 text-lg font-semibold leading-6 text-gray-900">{{ 'textSRISMembers' | translate }}</h1>
+      </div>
+      <table
+      class="min-w-full divide-y divide-gray-300 "
+    >
+      <ng-container *ngIf="srisMembers && !srisLoading">
+        <thead class="bg-white">
+          <tr>
+            <th scope="col" class="px-3 py-3.5 text-left text-xs lg:text-sm font-semibold text-gray-900">
+              {{ 'memberCode' | translate }}
+            </th>
+            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-xs lg:text-sm font-semibold text-gray-900">
+              {{ 'names' | translate }}
+            </th>
+            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-xs lg:text-sm font-semibold text-gray-900">
+              {{ 'gender' | translate }}
+            </th>
+            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-xs lg:text-sm font-semibold text-gray-900">
+              {{ 'DoB' | translate }}
+            </th>
+            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-xs lg:text-sm font-semibold text-gray-900">
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <ng-container *ngFor="let user of srisMembers; let j = index">
+            <tr class="cursor-pointer">
+              <td class="px-3 py-4 text-xs lg:text-sm text-gray-500 whitespace-nowrap">{{ user.memberCode ? user.memberCode : '--N/A--' }}</td>
+              <td class="px-3 py-4 text-xs lg:text-sm text-gray-600 whitespace-nowrap">
+                <span class="block mb-1">{{ user.firstName + ' ' + user.lastName + '' }}</span>
+              </td>
+              <td class="px-3 py-4 text-xs lg:text-sm text-gray-500 whitespace-nowrap">
+                <ng-container *ngIf="user.gender">{{ user.gender | lowercase | translate | titlecase }}</ng-container>
+                <ng-container *ngIf="!user.gender">{{ 'notApplicable' | translate }}</ng-container>
+              </td>
+              <td class="px-3 py-4 text-xs lg:text-sm text-gray-500 whitespace-nowrap">{{ user.dateOfBirth | date }}</td>
+              <td class="flex gap-2 items-center px-3 py-4 text-xs lg:text-sm text-gray-500 whitespace-nowrap">
+                <i-feather
+                    appAccessControl
+                    [permissions]="[EPermission.UPDATE_MEMBER]"
+                    (click)="openCreateMemberDialog(user, 'migration-update')"
+                    style="height: 18px; width: 18px;"
+                    name="edit"
+                    class="cursor-pointer"
+              ></i-feather>
+                <i-feather
+                    appAccessControl
+                    [permissions]="[EPermission.DELETE_MEMBER]"
+                    (click)="openCreateMemberDialog(user, 'migration-delete')"
+                    style="height: 18px; width: 18px;"
+                    name="trash-2"
+                    class="cursor-pointer"
+              ></i-feather>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </ng-container>
+      <ng-container *ngIf="srisLoading">
+        <app-table-shimmer
+          [searchSkeleton]="false"
+          [buttonNumber]="0"
+          [cols]="3"
+          [rows]="4"
+        ></app-table-shimmer>
+      </ng-container>
+      <ng-container *ngIf="!srisLoading && (!srisMembers || srisMembers.length === 0)">
+        <div class="w-full flex justify-center items-center">
+          <div class="w-1/2">
+            <app-not-found [showMessage]="false" [showButton]="false"></app-not-found>
+          </div>
+        </div>
+      </ng-container>
+    </table>
+    </div>
+
+
+    <div class="flex flex-col ustify-between gap-4">
+      <div class="flex items-center" *ngIf="!misLoading">
+        <h1 class="mr-3 text-lg font-semibold leading-6 text-gray-900">{{ 'textMISMembers' | translate }}</h1>
+      </div>
+      <table
+      class="min-w-full divide-y divide-gray-300"
+    >
+      <ng-container *ngIf="misMembers && !misLoading">
+        <thead class="bg-white">
+          <tr>
+            <th scope="col" class="px-3 py-3.5 text-left text-xs lg:text-sm font-semibold text-gray-900">
+              {{ 'memberCode' | translate }}
+            </th>
+            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-xs lg:text-sm font-semibold text-gray-900">
+              {{ 'names' | translate }}
+            </th>
+            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-xs lg:text-sm font-semibold text-gray-900">
+              {{ 'gender' | translate }}
+            </th>
+            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-xs lg:text-sm font-semibold text-gray-900">
+              {{ 'DoB' | translate }}
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <ng-container *ngFor="let user of misMembers; let j = index">
+            <tr class="cursor-pointer">
+              <td class="px-3 py-4 text-xs lg:text-sm text-gray-500 whitespace-nowrap">{{ user.memberCode ? user.memberCode : '--N/A--' }}</td>
+              <td class="px-3 py-4 text-xs lg:text-sm text-gray-600 whitespace-nowrap">
+                <span class="block mb-1">{{ user.firstName + ' ' + user.lastName + '' }}</span>
+              </td>
+              <td class="px-3 py-4 text-xs lg:text-sm text-gray-500 whitespace-nowrap">
+                <ng-container *ngIf="user.gender">{{ user.gender | lowercase | translate | titlecase }}</ng-container>
+                <ng-container *ngIf="!user.gender">{{ 'notApplicable' | translate }}</ng-container>
+              </td>
+              <td class="px-3 py-4 text-xs lg:text-sm text-gray-500 whitespace-nowrap">{{ user.dateOfBirth | date }}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </ng-container>
+      <ng-container *ngIf="misLoading">
+        <app-table-shimmer
+          [searchSkeleton]="false"
+          [buttonNumber]="0"
+          [cols]="3"
+          [rows]="4"
+        ></app-table-shimmer>
+      </ng-container>
+      <ng-container *ngIf="!misLoading && (!misMembers || misMembers.length === 0)">
+        <div class="w-full flex justify-center items-center">
+          <div class="w-1/2">
+            <app-not-found [showMessage]="false" [showButton]="false"></app-not-found>
+          </div>
+        </div>
+      </ng-container>
+    </table>
+    </div>
+  </div>
+
+  <div class="w-full h-full items-center justify-center mt-12" *ngIf="(!misHead && !srisHead) && !misLoading && !srisLoading">
+      <app-not-found [showButton]="true"  [keyword]="'Households'"></app-not-found>
+  </div>
+</div>

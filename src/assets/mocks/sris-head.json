@@ -1,0 +1,14 @@
+{
+  "status": true,
+  "response": {
+        "id": "89b6ee01-0359-431b-9e17-d6dc8d464662",
+        "firstName": "Delephine ",
+        "lastName": "Irizerimbuto",
+        "identificationType": "NONE",
+        "dateOfBirth": "2013-03-05",
+        "gender": "FEMALE",
+        "civilStatus": "SINGLE",
+        "membershipType": "CHILD",
+        "fullName": "Delephine  Irizerimbuto"
+      }
+}

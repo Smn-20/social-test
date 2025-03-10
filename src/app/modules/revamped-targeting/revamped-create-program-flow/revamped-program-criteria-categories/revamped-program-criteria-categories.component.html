@@ -1,0 +1,54 @@
+<div class="flex flex-col w-full space-y-6">
+  <div class="w-full flex items-center justify-between mt-2">
+    <h4 class="text-base font-medium text-gray-800">{{'criterias' | translate}}</h4>
+    <button
+      *ngIf="criterias.length > 0"
+      (click)="toggleCreateCriteriaModal()"
+      class="px-4 w-auto py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-4 h-4 mr-3"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      {{ 'moreCategory' | translate }}
+    </button>
+  </div>
+
+  <ng-container *ngIf="criterias.length > 0">
+    <ng-container *ngFor="let criteria of criterias; let i = index">
+      <app-revamped-criteria-card
+        [criteria]="criteria"
+        (saveCondition)="receiveCriteriaCondition($event)"
+      ></app-revamped-criteria-card>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngIf="criterias.length <= 0">
+    <div class="flex flex-col gap-3 items-center justify-center w-full h-full min-h-[25vh] px-4 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg py-4 space-y-2 bg-white">
+        <p class="text-base font-medium leading-6 text-gray-600">
+          {{'noTargetCriteriasAdded' | translate}}
+        </p>
+        <button
+          (click)="toggleCreateCriteriaModal()"
+          class="px-4 w-auto py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-4 h-4 mr-3"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          {{ 'addCriteria' | translate }}
+        </button>
+    </div>
+  </ng-container>
+</div>

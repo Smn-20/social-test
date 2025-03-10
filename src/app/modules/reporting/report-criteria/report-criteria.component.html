@@ -1,0 +1,103 @@
+<mat-expansion-panel [hideToggle]="expanded" (opened)="onOpened()" [disabled]="disabled">
+  <mat-expansion-panel-header class="w-full">
+    <mat-panel-title>
+      <div class="flex w-full justify-between">
+        <span>
+          {{ section.value }}
+        </span>
+        <div
+          *ngIf="criteriasLenght > 0"
+          class="inline-flex justify-center items-center bg-sky-100 py-0.5 px-2 rounded-full"
+        >
+          <span class="text-xs font-medium text-primary">
+            {{ criteriasLenght }}
+          </span>
+        </div>
+      </div>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <div class="flex flex-col space-y-6" *ngIf="loading">
+    <ng-container [ngTemplateOutlet]="tplCriteriaLoader"></ng-container>
+  </div>
+  <div class="flex flex-col space-y-6" *ngIf="!loading">
+    <ng-container *ngFor="let question of filteredQuestions; let i = index">
+      <div class="flex flex-col" [formGroup]="criteriaFormGroup">
+        <div class="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            [checked]="checked[i]"
+            (change)="onChecked(question.index, i)"
+            class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
+          />
+          <span [innerHTML]="question.criteriaName | highlight : filterInput"></span>
+        </div>
+        <ng-container *ngIf="checked[i]">
+          <div
+            class="flex mt-2"
+            *ngIf="
+              question.inputType !== 'RANGE' &&
+              (question?.questionType === 'RADIO_GROUP' ||
+                question?.questionType === 'CHECKBOX' ||
+                question?.questionType === 'DROPDOWN')
+            "
+          >
+            <mat-chip-listbox aria-label="Criteria selection">
+              <div class="flex flex-wrap gap-2">
+                <ng-container *ngFor="let criteria of question.answers; let j = index">
+                  <mat-chip-option
+                    color="primary"
+                    (selectionChange)="onselectionChange(question.index, question.answers[j])"
+                    >{{ criteria.answer }}</mat-chip-option
+                  >
+                </ng-container>
+              </div>
+            </mat-chip-listbox>
+          </div>
+          <div class="flex mt-2" *ngIf="question.inputType !== 'RANGE' && question?.questionType === 'TEXT'">
+            <input
+              [type]="question.inputType | lowercase"
+              [(ngModel)]="criterias[question.index].value" 
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="onTextSelection()"
+              placeholder="{{'provideValue' | translate}}" 
+              class="block w-full rounded-md border-0 py-2.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+            />
+          </div>
+          <div class="flex mt-2 space-x-10" *ngIf="question.inputType === 'RANGE'">
+            <div class="flex flex-col w-full space-y-2">
+              <label for="minimum" class="block text-sm font-medium leading-6 text-gray-600">Minimum value</label>
+              <input
+                type="number"
+                placeholder="{{'minCutoffValuePlaceholder' | translate}}"
+                [(ngModel)]="criterias[question.index]?.values[0]"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="onTextSelection()"
+                class="form-control block w-full rounded-md border-0 py-2.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+              />
+            </div>
+            <div class="flex flex-col w-full space-y-2">
+              <label for="minimum" class="block text-sm font-medium leading-6 text-gray-600">Maximum value</label>
+              <input
+                type="number"
+                [(ngModel)]="criterias[question.index]?.values[1]"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="onTextSelection()"
+                placeholder="{{'maxCutoffValuePlaceholder' | translate}}"
+                class="block w-full rounded-md border-0 py-2.5 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+</mat-expansion-panel>
+
+<ng-template #tplCriteriaLoader>
+  <ng-container *ngFor="let a of getArray()">
+    <div class="flex space-x-3 mb-3">
+      <p class="leading-relaxed md:w-[10px] 2xl:w-[20px] h-4 animate-pulse bg-gray-100"></p>
+      <p class="leading-relaxed md:w-[100px] 2xl:w-[200px] h-4 animate-pulse bg-gray-100"></p>
+    </div>
+  </ng-container>
+</ng-template>

@@ -1,0 +1,57 @@
+<div class="flex flex-col w-full md:flex-row md:items-center md:justify-between mb-4">
+  <div class="relative w-full w-[400px] rounded-md shadow-sm">
+    <div class="relative flex" *ngIf="searchSkeleton" [ngClass]="{ 'justify-end': searchRight }">
+      <p
+        class="leading-relaxed mb-3 md:w-[200px] md:h-[34px] 2xl:w-[400px] 2xl:h-[44px] animate-pulse bg-gray-100 rounded-md"
+      ></p>
+    </div>
+  </div>
+
+  <div class="flex flex-col space-y-3 md:flex-row md:space-x-3 md:space-y-0 md:items-center">
+    <ng-container *ngFor="let item of getArray(buttonNumber)">
+      <p class="leading-relaxed md:h-[34px] w-[100px] 2xl:h-[44px] animate-pulse bg-gray-100 rounded-md"></p>
+    </ng-container>
+
+    <!-- 44px height -->
+  </div>
+</div>
+<div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+  <div class="px-6 py-5 sm:flex sm:items-center bg-white">
+    <div class="flex">
+      <h1 class="mr-3 text-lg font-semibold leading-6 text-gray-900">
+        <p class="leading-relaxed mb-3 w-24 h-6 animate-pulse bg-gray-100 rounded-2xl"></p>
+      </h1>
+      <div class="inline-flex items-center justify-center px-2 rounded-2xl">
+        <p class="leading-relaxed mb-3 w-16 h-4 animate-pulse bg-gray-100 rounded-md"></p>
+      </div>
+    </div>
+  </div>
+  <div class="flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
+          <table class="min-w-full bg-white divide-y divide-gray-300">
+            <thead class="bg-white" *ngIf="showHeader">
+              <tr>
+                <th
+                  *ngFor="let item of getArray(cols)"
+                  scope="col"
+                  class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900"
+                >
+                  <p class="leading-relaxed mb-3 md:w-[50px] 2xl:w-[100px] h-4 animate-pulse bg-gray-200"></p>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr class="cursor-pointer" *ngFor="let item of getArray(rows)">
+                <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap" *ngFor="let item of getArray(cols)">
+                  <p class="leading-relaxed mb-3 md:w-[100px] 2xl:w-[200px] h-4 animate-pulse bg-gray-100"></p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

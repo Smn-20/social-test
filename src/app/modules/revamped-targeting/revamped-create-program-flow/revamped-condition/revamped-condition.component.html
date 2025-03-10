@@ -1,0 +1,288 @@
+<div
+  class="flex flex-col w-full h-auto flex-wrap px-4 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg"
+  [ngClass]="{ 'py-2 space-y-2': isSmallCard, 'py-6 space-y-6': !isSmallCard }"
+  *ngIf="condition"
+>
+  <ng-container>
+    <div class="flex items-center justify-between flex-wrap gap-3 md:flex-row my-3">
+      <label for="first-name" class="w-full flex items-center text-sm font-semibold leading-6 text-gray-600">
+        <span [matTooltip]="condition.question?.respondentType"
+          >{{ condition.question?.respondentType| removeUnderscore | uppercase }}</span
+        >
+      </label>
+      <div class="w-full flex items-center justify-between">
+        <div class="flex items-center justify-center" *ngIf="showStatus">
+          <ng-container *ngIf="conditionStatus === EState.ACTIVE">
+            <div class="flex justify-center items-center bg-green-100 py-1.5 px-2 rounded-2xl">
+              <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+              <span class="text-xs font-medium text-green-600">{{ 'statusActive' | translate }}</span>
+              <div class="ml-2 flex items-center justify-center" *ngIf="!hideActionButtons && conditionStatus === EState.ACTIVE">
+                <div class="cursor-pointer flex items-center justify-center" (click)="$event.stopPropagation(); onEnableDisable('disable')">
+                  <i-feather class="feather-16" name="slash"></i-feather>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="conditionStatus === EState.INACTIVE">
+            <div class="inline-flex justify-center items-center bg-yellow-100 py-1.5 px-2 rounded-2xl">
+              <span class="w-1.5 h-1.5 bg-yellow-600 rounded-full mr-1.5"></span>
+              <span class="text-xs font-medium text-yellow-600">{{ 'statusInactive' | translate }}</span>
+              <div class="ml-2 flex items-center justify-center" *ngIf="!hideActionButtons && conditionStatus === EState.INACTIVE">
+                <div class="cursor-pointer flex items-center justify-center" (click)="$event.stopPropagation(); onEnableDisable('enable')">
+                  <i-feather class="feather-16" name="check-circle"></i-feather>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <div
+            class="relative z-50"
+            aria-labelledby="modal-title"
+            role="dialog"
+            aria-modal="true"
+            *ngIf="confirmAction !== ''"
+          >
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            <div class="fixed inset-0 z-10 overflow-y-auto">
+              <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                  class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:p-6 space-y-10"
+                >
+                  <div>
+                    <div class="absolute top-0 right-0 pt-4 pr-4 sm:block">
+                      <button
+                        type="button"
+                        class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                        (click)="close()"
+                      >
+                        <span class="sr-only">{{'appClose' | translate}}</span>
+                        <svg
+                          class="w-6 h-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="text-gray-600 text-lg" *ngIf="confirmAction === 'enable'">
+                    {{'confirmConditionEnable' | translate}}?
+                  </div>
+                  <div class="text-gray-600 text-lg" *ngIf="confirmAction === 'disable'">
+                    {{'confirmConditionDisable' | translate}}?
+                  </div>
+                  <div class="flex justify-end space-x-6">
+                    <button
+                      class="px-4 py-2.5 rounded-lg bg-white text-gray-600 border border-gray-300 flex items-center justify-center font-semibold text-sm h-10"
+                      (click)="close()"
+                    >
+                      {{ 'cancelButton' | translate }}
+                    </button>
+                    <button
+                      [disabled]="actionLoading"
+                      class="px-4 w-auto py-2.5 rounded-lg bg-primary text-white flex items-center justify-center font-semibold text-sm h-10"
+                      (click)="triggerAction(condition)"
+                    >
+                      <ng-container *ngIf="actionLoading">
+                        <svg
+                          aria-hidden="true"
+                          role="status"
+                          class="inline w-4 h-4 mr-3 text-white animate-spin"
+                          viewBox="0 0 100 101"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                            fill="#E5E7EB"
+                          ></path>
+                          <path
+                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                            fill="currentColor"
+                          ></path>
+                        </svg>
+                      </ng-container>
+                      <ng-container *ngIf="confirmAction === 'enable'">
+                        {{ actionLoading ? ('enabling' | translate) : ('enable' | translate) }}
+                      </ng-container>
+                      <ng-container *ngIf="confirmAction === 'disable'">
+                        {{ actionLoading ? ('disabling' | translate) : ('disable' | translate) }}
+                      </ng-container>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-6" *ngIf="showRemoveButton || editable">
+          <div class="flex items-center" *ngIf="showRemoveButton">
+            <i-feather class="h-4 w-4 cursor-pointer" (click)="removeCondition(condition?.condition_id)" name="trash-2"></i-feather>
+          </div>
+    
+          <div class="flex items-center" *ngIf="editable">
+            <button
+              type="button"
+              class="relative inline-flex flex-shrink-0 h-6 transition-colors duration-200 ease-in-out bg-gray-200 border-2 border-transparent rounded-full cursor-pointer w-11 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              [ngClass]="{ 'bg-primary': openEditFormOut }"
+              role="switch"
+              aria-checked="false"
+              (click)="onActionEvent('edit-condition', condition)"
+            >
+              <span
+                aria-hidden="true"
+                class="inline-block w-5 h-5 transition duration-200 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none ring-0"
+                [ngClass]="{ 'translate-x-5': openEditFormOut }"
+              ></span>
+            </button>
+            <span class="ml-3 text-sm text-gray-600"> {{ 'edit' | translate }} </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="para-ellipse text-sm font-medium leading-6 text-gray-600 opacity-50 my-3 line-clamp-2 md:line-clamp-3 w-[400px]">
+      {{ condition.question?.description }}
+    </p>
+    <div class="flex w-full flex-col">
+      <div class="flex gap-4 items-center">
+        <span class="text-sm font-medium text-gray-600 opacity-80 my-3 line-clamp-3 md:line-clamp-4">
+          {{ 'quantityRequired' | translate }}
+        </span>
+        <ng-container>
+          <div
+            *ngIf="[
+              'EQUAL',
+              'NOT_EQUAL',
+              'GREATER_THAN',
+              'LESS_THAN',
+              'GREATER_THAN_OR_EQUAL',
+              'LESS_THAN_OR_EQUAL',
+              'IN',
+              'NOT_IN',
+              'IN_RANGE',
+              'NOT_IN_RANGE'
+            ].includes(condition.condition_value.operation ?? '')"
+            class="flex justify-between flex-col"
+          >
+            <div
+              class="block text-xs font-semibold text-gray-600 bg-gray-600/10 px-3 py-1.5 rounded-lg"
+            >
+              {{ condition.condition_value.operation | removeUnderscore | uppercase }} <ng-container
+              *ngIf="[
+                'EQUAL',
+                'NOT_EQUAL',
+                'GREATER_THAN_OR_EQUAL',
+                'LESS_THAN_OR_EQUAL',
+              ].includes(condition.condition_value.operation ?? '')"
+            >TO</ng-container>
+            </div>
+          </div>
+          <div
+            class="flex items-center justify-center text-xs font-semibold text-gray-600 bg-gray-600/10 border-[2px] border-green-500 px-3 py-1.5 rounded-xl"
+          >
+            <ng-container
+              *ngIf="![
+                'IN',
+                'NOT_IN',
+              ].includes(condition.condition_value.operation ?? '') &&
+              !checkIfArray(getConditionValue(condition.condition_value, false))"
+            >
+              {{ renderAnswerString(getConditionValue(condition.condition_value, false)) }}
+            </ng-container>
+            <ng-container
+              *ngIf="['EQUAL', 'NOT_EQUAL', 'IN', 'NOT_IN'].includes(condition.condition_value.operation ?? '') &&
+              checkIfArray(getConditionValue(condition.condition_value, false))"
+            >
+              <ng-container *ngFor="let value of turnToArray(getConditionValue(condition.condition_value, false)); let i = index">
+                <ng-container *ngIf="i === 0">
+                  {{ value.answer }}
+                  <ng-container *ngIf="turnToArray(getConditionValue(condition.condition_value, false)).length > 1">
+                    <span class="text-active-blue ml-3">
+                      + {{ turnToArray(getConditionValue(condition.condition_value, false)).length - 1 }} more
+                    </span>
+                  </ng-container>
+                </ng-container>
+              </ng-container>            
+            </ng-container>
+          </div>
+        </ng-container>
+        <ng-container
+          *ngIf="[
+            'IN_RANGE',
+            'NOT_IN_RANGE',
+            'GREATER_THAN_OR_EQUAL',
+            'LESS_THAN_OR_EQUAL',
+          ].includes(condition.condition_value.operation ?? '')"
+        > 
+          <div class="block text-xs font-semibold text-gray-600 bg-gray-600/10 px-3 py-1.5 rounded-lg">
+            AND 
+          </div>
+          <div class="flex items-center justify-center text-xs font-semibold text-gray-600 bg-gray-600/10 border-[2px] border-green-500 px-3 py-1.5 rounded-xl">
+            {{ renderAnswerString(getConditionValue(condition.condition_value, true)) }}
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="flex gap-4 items-center">
+        <span class="text-sm font-medium text-gray-600 opacity-80 my-3 line-clamp-3 md:line-clamp-4">
+          {{ 'quantityConditionMetric' | translate }}
+        </span>
+        <div
+          *ngIf="condition.value === 'ALL' || [
+            'EQUAL',
+            'NOT_EQUAL',
+            'GREATER_THAN',
+            'LESS_THAN',
+            'GREATER_THAN_OR_EQUAL',
+            'LESS_THAN_OR_EQUAL',
+          ].includes(condition.value?.operation ?? '')"
+          class="flex justify-between flex-col"
+        >
+          <div
+            class="block text-xs font-semibold text-gray-600 bg-gray-600/10 px-3 py-1.5 rounded-lg"
+          >
+            {{ getOperationValue(condition.value) | removeUnderscore | uppercase }} 
+            <ng-container
+              *ngIf="condition.value !== 'ALL' && [
+                'EQUAL',
+                'NOT_EQUAL',
+                'GREATER_THAN_OR_EQUAL',
+                'LESS_THAN_OR_EQUAL',
+              ].includes(condition.condition_value.operation ?? '')"
+            >TO</ng-container>
+          </div>
+        </div>
+        <span *ngIf="condition.value !== 'ALL'">
+          {{ renderAnswerString(getConditionValue(condition.value, false)) }}
+        </span>
+        <ng-container
+          *ngIf="[
+            'IN_RANGE',
+            'NOT_IN_RANGE',
+            'GREATER_THAN_OR_EQUAL',
+            'LESS_THAN_OR_EQUAL'
+          ].includes(getOperationValue(condition.value) ?? '')"
+        >
+          <div class="block text-xs font-semibold text-gray-600 bg-gray-600/10 px-3 py-1.5 rounded-lg">
+            AND 
+          </div>
+          <span>
+            {{ renderAnswerString(getConditionValue(condition.value, true)) }}
+          </span>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>
+<ng-template #chip let-val="val">
+  <mat-chip class="!bg-gray-200 !border-gray-200">
+    <div class="flex space-x-2">
+      <span class="font-medium text-gray-600">{{ val }}</span>
+    </div>
+  </mat-chip>
+</ng-template>

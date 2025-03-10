@@ -1,0 +1,165 @@
+<div class="flex flex-col space-y-6">
+    <ng-container>
+        <app-jurisdiction [title]="'jurisdictionDetails'"
+            [locationConfig]="{ type: loggedInUser.jurisdiction, id: loggedInUser.locationId }"
+            [showButton]="[EJurisdiction.NATIONAL].includes(this.loggedInUser?.jurisdiction)"
+            [buttonName]="'createDistribution'" [permissions]="[EPermission.CREATE_TARGETING]"
+            (jurisdictionEvent)="openCreateDistributionDialog()">
+        </app-jurisdiction>
+    </ng-container>
+</div>
+
+<div *ngIf="distributions && distributions.length > 0 && !loading" class="mt-8">
+    <div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+        <div class="px-6 py-5 sm:flex sm:items-center bg-white">
+            <div class="flex">
+                <h1 class="mr-3 text-lg font-semibold leading-6 text-gray-900">
+                    {{ 'partnerDistributions' | translate }}
+                </h1>
+                <div class="inline-flex items-center justify-center px-2 bg-sky-100 rounded-2xl">
+                    <span class="text-xs font-medium text-primary">
+                        {{ totalDistributions }} {{ 'partnerDistributions' | translate }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
+                        <table class="min-w-full bg-white divide-y divide-gray-300">
+                            <thead class="bg-white">
+                                <tr>
+                                    <th scope="col"
+                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'distributionCode' | translate }}
+                                    </th>
+                                    <th scope="col"
+                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'externalPartner' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'programComponents' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'helpStatus' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'batchOrder' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'progress' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'numberOfBeneficiaries' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'status' | translate }}
+                                    </th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {{ 'createdOn' | translate }}
+                                    </th>
+                                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                        <span class="sr-only"></span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <ng-container *ngFor="let distribution of distributions; let i = index">
+                                    <tr class="cursor-pointer">
+                                        <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ distribution.distributionCode }}
+                                        </td>
+                                        <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ distribution.externalPartner?.name }}
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ distribution.programComponent?.programName }}
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <app-status 
+                                                [status]="distribution.distributionType"
+                                            ></app-status>
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ distribution.batch?.batchOrder ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <app-status
+                                                [status]="distribution.progressStatus"
+                                                [progressStatus]="distribution.progressPercentage"
+                                            ></app-status>
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ distribution.numberOfBeneficiaries }}
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <app-status 
+                                                [status]="distribution.distributionStatus"
+                                            ></app-status>
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ distribution.createdAt | date }}
+                                        </td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <div class="flex flex-row space-x-4">
+                                                <div
+                                                    class="cursor-pointer"
+                                                    (click)="$event.stopPropagation(); openJurisdictionViewBeneficiaries(distribution)"
+                                                    class="cursor-pointer flex items-center space-x-2 text-sm font-medium text-primary"
+                                                >
+                                                    <span>{{ 'viewBeneficiaries' | translate }}</span>
+                                                </div>
+                    
+                                                <ng-container *ngIf="distribution.progressStatus !== ETargetingStatus.FINISHED">
+                                                    <i-feather
+                                                        [matTooltip]="'matTooltipRunProgram' | translate"
+                                                        appAccessControl
+                                                        [permissions]="[EPermission.CREATE_TARGETING]"
+                                                        (click)="$event.stopPropagation(); runPartnerBeneficiaryPopulation(distribution)"
+                                                        [name]="distribution.progressStatus === ETargetingStatus.RUNNING ? 'pause-circle' : 'play-circle'"
+                                                        class="w-4 h-4 pointer-cursor"
+                                                    ></i-feather>
+                                                </ng-container>
+
+                                                <ng-container *ngIf="distribution.progressStatus === ETargetingStatus.FINISHED">
+                                                    <i-feather
+                                                        [permissions]="[EPermission.VIEW_TARGETING]"
+                                                        appAccessControl
+                                                        [name]="'check-circle'"
+                                                        class="w-4 h-4 pointer-cursor"
+                                                    ></i-feather>
+                                                </ng-container>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-container *ngIf="distributions.length > 0">
+            <mat-paginator 
+                [length]="totalDistributions"
+                [pageIndex]="pagination.page"
+                [pageSize]="pagination.size"
+                (page)="onPageChange($event)"
+                aria-label="select">
+            </mat-paginator>
+        </ng-container>
+    </div>
+</div>
+<ng-container *ngIf="!loading && distributions && distributions.length === 0">
+    <div class="flex items-center justify-center w-full mt-10">
+        <div class="w-[800px]">
+            <app-not-found (refreshEvent)="receiveRefresh($event)" [keyword]="'partnerDistributions'"></app-not-found>
+        </div>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="loading">
+    <app-table-shimmer [buttonNumber]="1" [cols]="5" [rows]="6"></app-table-shimmer>
+</ng-container>
+  

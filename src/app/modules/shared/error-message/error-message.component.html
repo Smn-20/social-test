@@ -1,0 +1,30 @@
+<ng-container *ngIf="control.touched && control.errors?.required">
+  <div class="mt-1 text-red-500 text-xs">{{ fieldName }} {{'isRequired' | translate}}.</div>
+</ng-container>
+
+<ng-container *ngIf="control.touched && control.errors?.email">
+  <div class="mt-1 text-red-500 text-xs">{{ fieldName }} {{'mustBeValidEmail' | translate}}.</div>
+</ng-container>
+
+<ng-container *ngIf="control.touched && control.errors?.phone">
+  <div class="mt-1 text-red-500 text-xs">{{ fieldName }} {{'mustBe10Digits' | translate}}.</div>
+</ng-container>
+
+<ng-container
+  *ngIf="
+    (control.touched && control.errors?.minlength?.requiredLength === length) ||
+    (control.touched && control.errors?.maxlength?.requiredLength === length)
+  "
+>
+  <div class="mt-1 text-red-500 text-xs">{{ fieldName }} {{'mustBe' | translate}} {{ length }} {{'digits' | translate}}.</div>
+</ng-container>
+
+<ng-container *ngIf="control.touched && control.errors?.pattern?.requiredPattern === pwdRegex">
+  <div class="mt-1 text-red-500 text-xs">
+    {{ fieldName }} {{'mustBe8UppercaseNumberLowercase' | translate}}.
+  </div>
+</ng-container>
+
+<ng-container *ngIf="control.touched && control.errors?.nonZero">
+  <div class="mt-1 text-red-500 text-xs">{{ fieldName }} {{'shouldNotStart0' | translate}}.</div>
+</ng-container>

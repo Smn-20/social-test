@@ -1,0 +1,29 @@
+
+
+{
+  "status": true,
+  "response": {
+        "id": "f352d778-0054-4f0b-b39a-e04f44b138da",
+        "state": 2,
+        "status": "ACTIVE",
+        "createdAt": "2024-11-27T08:22:13.265+00:00",
+        "updatedAt": "2024-11-29T08:12:56.457+00:00",
+        "createdBy": null,
+        "updatedBy": null,
+        "code": "340104060274",
+        "lodaHouseholdCode": "340104060274",
+        "memberCode": "17381480",
+        "villageId": "b9c02962-f20f-42cc-9e0e-44e7bf9880eb",
+        "firstName": "Xxx",
+        "lastName": "MUSABYIMANA",
+        "fullName": null,
+        "nationalId": "1199480047080064",
+        "dateOfBirth": "1994-01-01",
+        "gender": "MALE",
+        "size": 3,
+        "creationDate": "2024-06-29",
+        "migrationStatus": "FINISHED",
+        "srisMigrationStatus": "PENDING",
+        "civilStatus": "SINGLE"
+      }
+}

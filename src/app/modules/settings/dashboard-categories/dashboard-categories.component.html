@@ -1,0 +1,105 @@
+<div class="flex flex-col space-y-6" *ngIf="!loading">
+  <!-- <div class="w-full">
+      <form class="w-full" [formGroup]="queryFormGroup">
+        <div class="relative w-full mt-2 rounded-md shadow-sm">
+          <input
+            type="text"
+            name="search"
+            class="block w-full rounded-md border-0 py-2.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            placeholder="{{ 'searchTranslationsPlaceholder' | translate }}"
+            formControlName="query"
+          />
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <ng-container *ngIf="!isSearching">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-5 h-5 text-gray-400"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+            </ng-container>
+
+          </div>
+        </div>
+      </form>
+    </div> -->
+  <div class="flex flex-row justify-between">
+    <h3 class="text-lg font-semibold text-gray-900">{{'dashboardCategories' | translate}}</h3>
+    <button
+      appAccessControl
+      [permissions]="[EPermission.CREATE_DASHBOARD, EPermission.CREATE_DASHBOARD_CATEGORY]" 
+      class="px-4 py-2.5 text-white rounded-lg bg-primary flex items-center font-semibold text-sm mt-4 md:mt-0"
+      (click)="openDialog()"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="#FFFFFF"
+        class="w-5 h-5 mr-3"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      {{'createDashboardCategory' | translate}}
+    </button>
+  </div>
+  <div>
+    <div class="shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+      <div class="px-6 py-5 sm:flex sm:items-center bg-white">
+        <div class="flex">
+          <h1 class="mr-3 text-lg font-semibold leading-6 text-gray-900">{{ 'translations' | translate }}</h1>
+          <!-- <div class="inline-flex items-center justify-center px-2 bg-purple-100 rounded-2xl">
+              <span class="text-xs font-medium text-purple-700">
+                {{totalTranslations}} {{ 'Categories' | translate }}</span
+              >
+            </div> -->
+        </div>
+      </div>
+      <div class="flow-root">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block py-2 align-middle sm:px-6 lg:px-8" style="width: 100%">
+            <div class="overflow-scroll shadow ring-1 ring-black ring-opacity-5">
+              <table class="bg-white divide-y divide-gray-300 w-full">
+                <thead class="bg-white">
+                  <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                       {{'category' | translate}}
+                    </th>
+
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">{{'action' | translate}}</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr class="cursor-pointer" *ngFor="let item of categories">
+                    <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+                      {{ item.name }}
+                    </td>
+
+                    <td 
+                    appAccessControl
+                    [permissions]="[EPermission.UPDATE_DASHBOARD_CATEGORY]" 
+                    class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+                      <i-feather (click)="openDialog(item)" name="edit"></i-feather>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-container *ngIf="loading">
+  <app-table-shimmer [searchSkeleton]="true" [buttonNumber]="0" [cols]="2" [rows]="6"></app-table-shimmer>
+</ng-container>

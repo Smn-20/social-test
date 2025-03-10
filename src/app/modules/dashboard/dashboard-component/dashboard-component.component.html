@@ -1,0 +1,61 @@
+<div class="flex flex-col w-full p-4 space-y-2 bg-white border border-gray-200 rounded-lg shadow-sm" *ngIf="!dashboardLoading && !!dashboardOptions?.series &&  (dashboardData && dashboardData.length > 0)">
+  <div class="flex justify-end">
+    <i-feather
+      [matTooltip]="'editDashboard' | translate"
+      appAccessControl
+      [permissions]="[EPermission.UPDATE_DASHBOARD]"
+      (click)="openCreateDashboardDialog()"
+      name="edit"
+      class="w-4 h-4 pointer-cursor"
+    ></i-feather>
+  </div>
+  <div class="flex justify-between">
+    <div class="flex space-x-4 items-center">
+      <p class="font-semibold text-gray-900">{{ title | removeUnderscore }}</p>
+      <div class="inline-flex items-center justify-center p-2 bg-sky-100 rounded-2xl">
+        <span class="text-xs font-medium text-primary">{{ total | number }} {{ 'total' | translate }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="flex w-full mt-5">
+    <div
+      class="relative"
+      appAccessControl
+      [permissions]="[EPermission.VIEW_DASHBOARD, EPermission.VIEW_HOUSE_HOLD]"
+    >
+      <div
+        appAccessControl
+        [permissions]="[EPermission.VIEW_DASHBOARD]"
+      >
+      <app-filter
+      [allowedFilters]="[EFilterAction.LOCATION]"
+      [selectedFilter]="selectedFilter"
+      [selectedStatusFilter]="selectedStatusFilter"
+      [dashboardTitle]="title"
+      [isDashboard]="true"
+      [isSelected]="isDashboardSelected"
+      (setFilterEvent)="onSetFilterEvent($event)"
+    >
+    </app-filter>
+      </div>
+    </div>
+  </div>
+  <div id="chart">
+    <apx-chart
+      [title]="dashboardOptions.title"
+      [dataLabels]="dashboardOptions.dataLabels"
+      [colors]="dashboardOptions.colors"
+      [series]="dashboardOptions.series"
+      [legend]="dashboardOptions.legend"
+      [chart]="dashboardOptions.chart"
+      [yaxis]="dashboardOptions.yaxis"
+      [xaxis]="dashboardOptions.xaxis"
+      [labels]="dashboardOptions.labels"
+      [stroke]="dashboardOptions.stroke"
+      [plotOptions]="dashboardOptions.plotOptions"
+      [markers]="dashboardOptions.markers"
+      [fill]="dashboardOptions.fill"
+      [tooltip]="dashboardOptions.tooltip"
+    ></apx-chart>
+  </div>
+</div>

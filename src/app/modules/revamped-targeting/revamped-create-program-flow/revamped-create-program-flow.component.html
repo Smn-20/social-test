@@ -1,0 +1,125 @@
+<div class="flex flex-col space-y-4">
+  <!-- program details section -->
+
+  <div class="flex flex-col w-full shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:mt-0 bg-white">
+    <div
+      class="flex items-center justify-between w-full px-4 py-4 bg-white border-b border-gray-200 rounded-t-lg sm:px-3 flex-col md:flex-row"
+    >
+      <div class="flex w-full justify-between">
+        <div class="flex items-center">
+          <div class="bg-sky-100 p-1 mr-3.5 rounded-full">
+            <div class="p-1 bg-sky-200 rounded-full cursor-pointer" routerLink="/admin/targeting/programs">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M13.3334 8H2.66675M2.66675 8L6.66675 12M2.66675 8L6.66675 4"
+                  stroke="#058ccc"
+                  stroke-width="1.33333"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <p class="text-base font-semibold leading-6 text-gray-600">{{'programDetails' | translate}}</p>
+        </div>
+
+        <div class="flex items-center space-x-4" *ngIf="program?.programName">
+          <div class="flex items-center">
+            <button
+              type="button"
+              class="relative inline-flex flex-shrink-0 h-6 transition-colors duration-200 ease-in-out bg-gray-200 border-2 border-transparent rounded-full cursor-pointer w-11 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              [ngClass]="{ 'bg-primary': openProgramEditForm }"
+              role="switch"
+              aria-checked="false"
+              (click)="toggleProgramEditForm()"
+            >
+              <span
+                aria-hidden="true"
+                class="inline-block w-5 h-5 transition duration-200 ease-in-out transform translate-x-0 bg-white rounded-full shadow pointer-events-none ring-0"
+                [ngClass]="{ 'translate-x-5': openProgramEditForm }"
+              ></span>
+            </button>
+            <span class="ml-3 text-sm text-gray-600">{{'editMode' | translate}} </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col px-4 py-4 space-y-3" *ngIf="!openProgramEditForm">
+      <div class="flex flex-col space-y-1 text-sm">
+        <p class="text-gray-500">
+          {{'programName' | translate}}: <span class="font-medium">{{ program.programName }}</span>
+        </p>
+        <p class="text-gray-500">
+          {{'cutoffName' | translate}}: <span class="font-medium">{{ program.cutOff.cutoffName }}</span>
+        </p>
+        <p class="text-gray-500" *ngIf="program.institutionId.name">
+          {{'institutionName' | translate}}: <span class="font-medium">{{ program.institutionId?.name }}</span>
+        </p>
+        <p class="text-gray-500">
+          {{'matchAllGroups' | translate}}:
+          <span class="font-medium">{{ program.matchAllGroups ? ('yes' | translate) : ('no' | translate) }}</span>
+        </p>
+      </div>
+      <div class="flex flex-col gap-2" *ngIf="program.excludedProgramIds?.length > 0">
+        <p class="mb-1 text-base font-medium text-gray-800">{{'excludedPrograms' | translate}}</p>
+        <div class="flex gap-4">
+          <ng-container *ngFor="let prog of program.excludedProgramIds">
+            <mat-chip class="!bg-gray-200 !border-gray-200">
+              <div class="flex space-x-2">
+                <span class="font-medium text-gray-600">{{ prog.name }}</span>
+              </div>
+            </mat-chip>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2" *ngIf="program.includedProgramIds?.length > 0">
+        <p class="mb-1 text-base font-medium text-gray-800">{{'includedPrograms' | translate}}</p>
+        <div class="flex gap-4">
+          <ng-container *ngFor="let prog of program.includedProgramIds">
+            <mat-chip class="!bg-gray-200 !border-gray-200">
+              <div class="flex space-x-2">
+                <span class="font-medium text-gray-600">{{ prog.name }}</span>
+              </div>
+            </mat-chip>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <ng-container>
+      <div class="p-4" *ngIf="openProgramEditForm">
+        <app-revamped-create-program
+          [isCompact]="false"
+          [criterias]="criterias"
+          (closeEvent)="toggleProgramEditForm()"
+          (saveEvent)="receiveCoreProgramData($event)"
+        ></app-revamped-create-program>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- start of category section -->
+  <div class="w-full">
+    <app-revamped-program-criteria-categories
+      (receiveDataEvent)="receiveCriteriaData($event)"
+    ></app-revamped-program-criteria-categories>
+  </div>
+
+  
+  <div class="flex w-full justify-end mt-8">
+    <button
+      class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white flex items-center justify-center font-semibold text-sm mr-10 w-28 h-10"
+      (click)="saveProgramPayload(true)">
+      {{ 'cancelButton' | translate }}
+    </button>
+    <button (click)="saveProgramPayload(false)"
+      class="px-4 w-auto py-2.5 text-white rounded-lg bg-primary flex items-center justify-center font-semibold text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+        stroke="currentColor" class="w-4 h-4 mr-3">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      {{ 'saveProgram' | translate }}
+    </button>
+  </div>
+  <!-- end of category section-->
+</div>

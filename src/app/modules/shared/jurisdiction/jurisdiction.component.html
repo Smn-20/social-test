@@ -1,0 +1,111 @@
+<div class="flex flex-col w-full shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:mt-0 bg-white">
+  <div
+    class="flex items-center justify-between w-full px-4 py-4 bg-white border-b border-gray-200 rounded-t-lg sm:px-3 flex-col md:flex-row"
+  >
+    <div class="flex items-center">
+      <div class="bg-sky-100 p-1 mr-3.5 rounded-full" *ngIf="!hasBack">
+        <div class="p-1 bg-sky-200 rounded-full">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-4 h-4 text-primary"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+            />
+          </svg>
+        </div>
+      </div>
+      <div class="bg-sky-100 p-1 mr-3.5 rounded-full" *ngIf="hasBack">
+        <div class="p-1 bg-sky-200 rounded-full cursor-pointer" (click)="goBack()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M13.3334 8H2.66675M2.66675 8L6.66675 12M2.66675 8L6.66675 4"
+              stroke="#058ccc"
+              stroke-width="1.33333"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
+      <p class="text-base font-semibold leading-6 text-gray-600">{{ title | translate }}</p>
+    </div>
+    <button
+      appAccessControl
+      [permissions]="permissions"
+      *ngIf="showButton"
+      class="px-4 py-2.5 text-white rounded-lg bg-primary flex items-center font-semibold text-sm mt-4 md:mt-0"
+      (click)="onOutputEvent()"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="#FFFFFF"
+        class="w-5 h-5 mr-3"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      {{ buttonName | translate }}
+    </button>
+    <ng-container *ngIf="hasLocationFilter">
+      <app-filter
+        [allowedFilters]="[EFilterAction.LOCATION]"
+        [selectedFilter]="locationConfig?.selectedFilter"
+        (setFilterEvent)="onSetFilterEvent($event)"
+      >
+      </app-filter>
+    </ng-container>
+  </div>
+  <div class="flex flex-col space-y-3" [ngClass]="{ 'px-10': !isCompact }">
+    <div class="px-4 py-4" *ngIf="location && !loading">
+      <ng-container *ngIf="locationConfig?.type === EJurisdiction.NATIONAL">
+        <p class="mb-1 text-2xl font-semibold text-gray-800 text-center md:text-left">
+          {{ 'nationWide' | translate }}
+        </p>
+        <p class="text-gray-500 text-center md:text-left">
+          {{ 'level' | translate }}: {{ locationConfig?.type | titlecase }}
+        </p>
+      </ng-container>
+
+      <ng-container *ngIf="location && locationConfig?.type !== EJurisdiction.NATIONAL">
+        <ng-container *ngIf="location?.provinceName">
+          <p class="mb-1 text-2xl font-semibold text-gray-800">{{ location.provinceName | lowercase | translate }}</p>
+        </ng-container>
+
+        <div class="flex text-sm text-gray-500 flex-wrap">
+          <ng-container *ngIf="location?.districtName">
+            <span class="mr-1.5">{{ location.districtName }}</span>
+          </ng-container>
+          <ng-container *ngIf="location?.sectorName">
+            <span class="mr-1.5 ml-1.5">/ {{ location.sectorName }}</span>
+          </ng-container>
+          <ng-container *ngIf="location?.cellName"
+            ><span class="mr-1.5 ml-1.5">/ {{ location.cellName }}</span></ng-container
+          >
+          <ng-container *ngIf="location?.villageName"
+            >/ <span class="ml-1.5">{{ location.villageName }}</span></ng-container
+          >
+        </div>
+      </ng-container>
+    </div>
+    <div class="flex flex-col px-4 py-4" *ngIf="loading">
+      <div class="flex">
+        <p class="w-24 h-6 mb-3 leading-relaxed bg-gray-100 animate-pulse"></p>
+      </div>
+      <div class="flex gap-2">
+        <p class="w-12 h-3 mb-3 leading-relaxed bg-gray-100 animate-pulse"></p>
+        <p class="w-12 h-3 mb-3 leading-relaxed bg-gray-100 animate-pulse"></p>
+        <p class="w-12 h-3 mb-3 leading-relaxed bg-gray-100 animate-pulse"></p>
+        <p class="w-12 h-3 mb-3 leading-relaxed bg-gray-100 animate-pulse"></p>
+      </div>
+    </div>
+  </div>
+</div>

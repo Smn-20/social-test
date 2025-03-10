@@ -1,0 +1,215 @@
+<div class="flex flex-col space-y-2" *ngIf="dashboards.length > 0">
+  <div class="lg:flex flex-row w-full gap-2" appAccessControl [permissions]= "[EPermission.VIEW_DASHBOARD]">
+    <div
+      appAccessControl
+      [permissions]= "[EPermission.VIEW_DASHBOARD]"
+      class="flex flex-col lg:w-[68.5%] p-1 space-y-2 bg-white border border-gray-200 rounded-lg shadow-sm"
+    >
+      <ng-container *ngIf="dashboards.length > 0 && !dashboardLoading1 && chartOptions.series.length>0">
+        <div id="chart" class="">
+          <apx-chart
+            [title]="chartOptions.title"
+            [dataLabels]="chartOptions.dataLabels"
+            [series]="chartOptions.series"
+            [legend]="chartOptions.legend"
+            [chart]="chartOptions.chart"
+            [yaxis]="chartOptions.yaxis"
+            [xaxis]="chartOptions.xaxis"
+            [labels]="chartOptions.labels"
+            [stroke]="chartOptions.stroke"
+            [plotOptions]="chartOptions.plotOptions"
+            [markers]="chartOptions.markers"
+            [fill]="chartOptions.fill"
+            [tooltip]="chartOptions.tooltip"
+            class="h-full"
+          ></apx-chart>
+        </div>
+      </ng-container>
+      <ng-container class="items-center justify-center" *ngIf="!dashboardLoading1 && chartOptions.series.length===0">
+        <h3 style="font-size:14px;font-family: Helvetica, Arial, sans-serif;margin-top:10px;margin-left:10px;font-weight: bold;color:black">{{setTitleDash1(language)}}</h3>
+        <div style="width:50%" class="m-auto">
+          <img src="../../../assets/no-chart.png" style="width:100%">
+          <p style="text-align: center;">Empty</p>
+        </div>
+      </ng-container>
+    </div>
+    <div
+      appAccessControl
+      [permissions]= "[EPermission.VIEW_DASHBOARD]"
+      class="flex flex-col w-full lg:w-[31.5%] p-1 space-y-2 bg-white border border-gray-200 rounded-lg shadow-sm"
+    >
+      <ng-container>
+        <div *ngIf="!dashboardLoading5 && chartOptions5.series.length>0" id="chart" class=" ">
+          <apx-chart
+            [title]="chartOptions5.title"
+            [dataLabels]="chartOptions5.dataLabels"
+            [colors]="chartOptions5.colors"
+            [series]="chartOptions5.series"
+            [legend]="chartOptions5.legend"
+            [chart]="chartOptions5.chart"
+            [yaxis]="chartOptions5.yaxis"
+            [xaxis]="chartOptions5.xaxis"
+            [labels]="chartOptions5.labels"
+            [stroke]="chartOptions5.stroke"
+            [plotOptions]="chartOptions5.plotOptions"
+            [markers]="chartOptions5.markers"
+            [fill]="chartOptions5.fill"
+            [tooltip]="chartOptions5.tooltip"
+            [responsive]="chartOptions5.responsive"
+            class=""
+          ></apx-chart>
+        </div>
+        <ng-container class="items-center justify-center" *ngIf="!dashboardLoading5 && chartOptions5.series.length===0">
+          <h3 style="font-size:14px;font-family: Helvetica, Arial, sans-serif;margin-top:10px;margin-left:10px;font-weight: bold;color:black">{{setTitleDash5(language)}}</h3>
+          <div style="width:50%" class="m-auto">
+            <img src="../../../assets/no-chart.png" style="width:100%">
+            <p style="text-align: center;">Empty</p>
+          </div>
+        </ng-container>
+        <div *ngIf="!dashboardLoading6 && chartOptions6.series.length>0" id="chart">
+          <apx-chart
+            [title]="chartOptions6.title"
+            [dataLabels]="chartOptions6.dataLabels"
+            [colors]="chartOptions6.colors"
+            [series]="chartOptions6.series"
+            [legend]="chartOptions6.legend"
+            [chart]="chartOptions6.chart"
+            [yaxis]="chartOptions6.yaxis"
+            [xaxis]="chartOptions6.xaxis"
+            [labels]="chartOptions6.labels"
+            [stroke]="chartOptions6.stroke"
+            [plotOptions]="chartOptions6.plotOptions"
+            [markers]="chartOptions6.markers"
+            [fill]="chartOptions6.fill"
+            [tooltip]="chartOptions6.tooltip"
+            [responsive]="chartOptions6.responsive"
+          ></apx-chart>
+        </div>
+        <ng-container class="items-center justify-center" *ngIf="!dashboardLoading6 && chartOptions6.series.length===0">
+          <h3 style="font-size:14px;font-family: Helvetica, Arial, sans-serif;margin-top:10px;margin-left:10px;font-weight: bold;color:black">{{setTitleDash6(language)}}</h3>
+          <div style="width:50%" class="m-auto">
+            <img src="../../../assets/no-chart.png" style="width:100%">
+            <p style="text-align: center;">Empty</p>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+  <div class="lg:flex flex-row w-full gap-2" appAccessControl [permissions]= "[EPermission.VIEW_DASHBOARD]">
+    <div
+      appAccessControl
+      [permissions]= "[EPermission.VIEW_DASHBOARD]"
+      class="flex flex-col w-full lg:w-[43.5%] p-1 space-y-2 bg-white border border-gray-200 rounded-lg shadow-sm"
+    >
+      <ng-container *ngIf="dashboards.length > 2 && !dashboardLoading3 && chartOptions3.series.length>0">
+        <div id="chart">
+          <apx-chart
+            [title]="chartOptions3.title"
+            [dataLabels]="chartOptions3.dataLabels"
+            [colors]="chartOptions3.colors"
+            [series]="chartOptions3.series"
+            [legend]="chartOptions3.legend"
+            [chart]="chartOptions3.chart"
+            [yaxis]="chartOptions3.yaxis"
+            [xaxis]="chartOptions3.xaxis"
+            [labels]="chartOptions3.labels"
+            [stroke]="chartOptions3.stroke"
+            [plotOptions]="chartOptions3.plotOptions"
+            [markers]="chartOptions3.markers"
+            [fill]="chartOptions3.fill"
+            [tooltip]="chartOptions3.tooltip"
+          ></apx-chart>
+        </div>
+      </ng-container>
+      <ng-container class="items-center justify-center" *ngIf="!dashboardLoading3 && chartOptions3.series.length===0">
+        <h3 style="font-size:14px;font-family: Helvetica, Arial, sans-serif;margin-top:10px;margin-left:10px;font-weight: bold;color:black">{{setTitleDash3(language)}}</h3>
+        <div style="width:50%" class="m-auto">
+          <img src="../../../assets/no-chart.png" style="width:100%">
+          <p style="text-align: center;">Empty</p>
+        </div>
+      </ng-container>
+      <div class="center" *ngIf="dashboards.length < 3">
+        {{ 'noDashboard' | translate }}
+      </div>
+    </div>
+
+    <div
+      appAccessControl
+      [permissions]= "[EPermission.VIEW_DASHBOARD]"
+      class="flex flex-col w-full lg:w-[25%] p-1 space-y-2 bg-white border border-gray-200 rounded-lg shadow-sm"
+    >
+      <ng-container *ngIf="dashboards.length > 1 && !dashboardLoading2  && chartOptions2.series.length>0">
+        <div id="chart">
+          <apx-chart
+            [title]="chartOptions2.title"
+            [dataLabels]="chartOptions2.dataLabels"
+            [colors]="chartOptions2.colors"
+            [series]="chartOptions2.series"
+            [legend]="chartOptions2.legend"
+            [chart]="chartOptions2.chart"
+            [yaxis]="chartOptions2.yaxis"
+            [xaxis]="chartOptions2.xaxis"
+            [labels]="chartOptions2.labels"
+            [stroke]="chartOptions2.stroke"
+            [plotOptions]="chartOptions2.plotOptions"
+            [markers]="chartOptions2.markers"
+            [fill]="chartOptions2.fill"
+            [tooltip]="chartOptions2.tooltip"
+          ></apx-chart>
+        </div>
+      </ng-container>
+      <ng-container class="items-center justify-center" *ngIf="!dashboardLoading2 && chartOptions2.series.length===0">
+        <h3 style="font-size:14px;font-family: Helvetica, Arial, sans-serif;margin-top:10px;margin-left:10px;font-weight: bold;color:black">{{setTitleDash2(language)}}</h3>
+        <div style="width:50%" class="m-auto">
+          <img src="../../../assets/no-chart.png" style="width:100%">
+          <p style="text-align: center;">Empty</p>
+        </div>
+      </ng-container>
+      <div class="center" *ngIf="dashboards.length < 2">
+        {{ 'noDashboard' | translate }}
+      </div>
+    </div>
+
+    <div
+      appAccessControl
+      [permissions]= "[EPermission.VIEW_DASHBOARD]"
+      class="flex flex-col w-full lg:w-[31.5%] p-1 space-y-2 bg-white border border-gray-200 rounded-lg shadow-sm"
+    >
+      <ng-container *ngIf="dashboards.length > 3 && !dashboardLoading4 && chartOptions4.series.length>0">
+        <div id="chart">
+          <apx-chart
+            [title]="chartOptions4.title"
+            [dataLabels]="chartOptions4.dataLabels"
+            [colors]="chartOptions4.colors"
+            [series]="chartOptions4.series"
+            [legend]="chartOptions4.legend"
+            [chart]="chartOptions4.chart"
+            [yaxis]="chartOptions4.yaxis"
+            [xaxis]="chartOptions4.xaxis"
+            [labels]="chartOptions4.labels"
+            [stroke]="chartOptions4.stroke"
+            [plotOptions]="chartOptions4.plotOptions"
+            [markers]="chartOptions4.markers"
+            [fill]="chartOptions4.fill"
+            [tooltip]="chartOptions4.tooltip"
+            [responsive]="chartOptions4.responsive"
+          ></apx-chart>
+        </div>
+      </ng-container>
+      <ng-container class="items-center justify-center" *ngIf="!dashboardLoading4 && chartOptions4.series.length===0">
+        <h3 style="font-size:14px;font-family: Helvetica, Arial, sans-serif;margin-top:10px;margin-left:10px;font-weight: bold;color:black">{{setTitleDash4(language)}}</h3>
+        <div style="width:50%" class="m-auto">
+          <img src="../../../assets/no-chart.png" style="width:100%">
+          <p style="text-align: center;">Empty</p>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <!-- <div appAccessControl [permissions]="[EPermission.VIEW_DASHBOARD]" class="flex flex-col w-2/3 p-4 space-y-2 bg-white border border-gray-200 rounded-lg shadow-sm">
+        <ng-container class="w-full" *ngIf="dashboardLoading">
+            <span class="absolute inset-y-0 flex items-center right-3">
+                <app-spinner size="5"></app-spinner>
+            </span>
+        </ng-container>
+    </div> -->
+</div>

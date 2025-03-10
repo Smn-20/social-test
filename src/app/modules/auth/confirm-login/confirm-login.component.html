@@ -1,0 +1,118 @@
+<div class="flex gap-12 flex-wrap mt-7">
+  <div class="w-auto max-[680px]:w-[80%]">
+    <div class="flex flex-col space-y-3 sm:w-80 w-auto min-w-60% max-w-80%">
+      <div>
+        <h2 class="text-xl font-semibold sm:text-2xl">{{ 'confirmSignIn' | translate }}</h2>
+      </div>
+      <div>
+        <p class="text-base" style="color: #475467">{{ 'confirmSignInText' | translate }}</p>
+      </div>
+    </div>
+    <form class="mt-8 sm:w-80 max-[680px]:w-full" (ngSubmit)="loginOtp(otpForm)" [formGroup]="otpForm">
+      <div class="flex flex-col space-y-5">
+        <div class="w-full">
+          <label for="code" class="text-sm font-medium" style="color: #344054">{{ 'code' | translate }}</label>
+          <input
+            formControlName="otp"
+            type="text"
+            autofocus
+            class="w-full rounded-lg placeholder-current mt-1.5 border-gray-200 focus:border-primary placeholder:text-gray-500"
+            placeholder="{{ 'OTPPlaceholder' | translate }}"
+          />
+        </div>
+        <div class="w-full">
+          <ng-container *ngIf="loading">
+            <button disabled type="button" class="w-full h-10 text-center text-white rounded-lg bg-primary">
+              <svg
+                aria-hidden="true"
+                role="status"
+                class="inline w-4 h-4 mr-3 text-white animate-spin"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="#E5E7EB"
+                ></path>
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+              {{ 'loading' | translate }}
+            </button>
+          </ng-container>
+          <ng-container *ngIf="!loading">
+            <button
+              [disabled]="otpForm.invalid"
+              type="submit"
+              class="w-full h-10 text-white rounded-lg bg-primary disabled:bg-primary"
+            >
+              {{ 'confirm' | translate }}
+            </button>
+          </ng-container>
+        </div>
+        <a class="flex items-center justify-center mt-8" routerLink="/auth/login">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5 mr-3"
+            style="color: #475467"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75" />
+          </svg>
+        
+          <span class="text-base font-semibold" style="color: #475467">{{ 'backToLogin' | translate }}</span>
+        </a>
+      </div>
+    </form>
+  </div>
+  <div *ngIf="!!qrCodeImage" class="h-[350px] max-[680px]:hidden w-1 relative border-r-[1.2px] border-gray-300"></div>
+  <div *ngIf="!!qrCodeImage" class="w-auto max-[680px]:w-full">
+    <div class="flex flex-col justify-center">
+      <p class="font-semibold">
+        {{ "stepsToInstallApp" | translate }}
+      </p>
+      <div class="flex mt-4 flex-wrap gap-5">
+        <div>
+          <img *ngIf="qrCodeImage" [src]="qrCodeImage" class="mt-2" alt="QR Code">
+        </div>
+        <div class="flex flex-col gap-3 mt-2 max-w-[400px]">
+          <p class="text-base" style="color: #475467">
+            <strong>1.</strong> {{ 'stepOneToInstallApp' | translate }}
+          </p>
+          <p class="text-base" style="color: #475467">
+            <strong>2.</strong> {{ 'stepTwoToInstallApp' | translate }}
+          </p>
+        </div>
+      </div>
+      <div class="w-[580px] mt-5">
+        <p class="text-base" style="color: #475467">
+          <strong>3.</strong> {{ 'stepThreeToInstallApp' | translate }}
+        </p>
+      </div>
+      <div class="w-[580px] mt-5">
+        <p class="font-semibold">
+          {{ "whereToDownloadApp" | translate }}
+        </p>
+        <div class="flex gap-6 items-center mt-4">
+          <img
+            src="assets/playstore.svg" alt="PlayStore"
+            class="cursor-pointer"
+            (click)="openLink('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=web_share')"
+          />
+          <img 
+            src="assets/appstore.svg" alt="AppStore"
+            class="cursor-pointer"
+            (click)="openLink('https://apps.apple.com/us/app/google-authenticator/id388497605')"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,43 @@
+<!-- New Program Modal -->
+
+<!-- <mat-dialog-content> -->
+<div class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+
+  <div class="fixed inset-0 z-30 overflow-y-auto h-auto">
+    <div class="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0 w-auto mx-auto">
+      <div
+        class="relative py-5 overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl px-7 sm:w-full sm:max-w-lg md:max-w-2xl lg:max-w-3xl xl:max-w-5xl sm:px-11 sm:py-7"
+      >
+        <div>
+          <h1 class="absolute top-0 left-0 text-lg font-semibold pt-7 pl-11">
+            {{ 'newProgram' | translate }}
+          </h1>
+          <div class="absolute top-0 right-0 pt-7 pr-11 sm:block">
+            <button
+              type="button"
+              class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              (click)="close()"
+            >
+              <span class="sr-only">{{'appClose' | translate}}</span>
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-col mt-20">
+          <app-create-program (closeEvent)="close()" (saveEvent)="save($event)"></app-create-program>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- </mat-dialog-content> -->

@@ -1,0 +1,284 @@
+<div class="w-full">
+  <form class="flex flex-col" [formGroup]="userFormGroup" (ngSubmit)="updateUser()">
+    <div class="flex flex-col w-full md:flex-row">
+      <div
+        class="flex flex-col w-full mt-6 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:mt-0 md:w-1/2 md:mr-7"
+      >
+        <div class="flex items-center w-full px-4 py-4 bg-white border-b border-gray-200 rounded-t-lg sm:px-3">
+          <div class="bg-sky-100 p-1 mr-3.5 rounded-full">
+            <div class="p-1 bg-sky-200 rounded-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4 text-primary"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                />
+              </svg>
+            </div>
+          </div>
+          <p class="text-base font-semibold leading-6 text-gray-600">{{ 'userDetails' | translate }}</p>
+        </div>
+        <div class="w-full px-4 py-6 flex flex-col space-y-3">
+          <div class="w-full">
+            <label for="doc-type" class="block text-sm font-medium leading-6 text-gray-600">{{
+              'identificationType' | translate
+            }}</label>
+            <ng-select
+              formControlName="documentType"
+              placeholder="{{ 'selectDocTypePlaceholder' | translate }}"
+              [items]="docTypes"
+              bindLabel="name"
+              bindValue="value"
+            ></ng-select>
+          </div>
+          <div class="w-full">
+            <label for="nid" class="block text-sm font-medium leading-6 text-gray-600">
+              {{ 'NationalIDDocType' | translate }}</label
+            >
+            <div class="relative mt-0">
+              <input
+                required
+                appAllowNumber
+                maxlength="16"
+                minlength="16"
+                formControlName="documentNumber"
+                type="text"
+                placeholder="{{ 'enterNationalIDPlaceholder' | translate }}"
+                class="h-10 block w-full rounded-md border-0 py-1.5 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <div class="w-full">
+            <label for="first-name" class="block text-sm font-medium leading-6 text-gray-600">{{
+              'role' | translate
+            }}</label>
+            <ng-select
+              formControlName="roleId"
+              placeholder="{{ 'selectRolePlaceholder' | translate }}"
+              [items]="roles"
+              bindLabel="roleName"
+              bindValue="id"
+              [multiple]="true"
+              [appendTo]="'body'"
+              [class]="
+                formControls['roleId'].touched && formControls['roleId'].errors
+                  ? 'form-control invalid-feedback'
+                  : 'form-control'
+              "
+            ></ng-select>
+            <app-error-message [control]="formControls['roleId']" fieldName="Role"> </app-error-message>
+          </div>
+          <div class="w-full">
+            <label for="first-name" class="block text-sm font-medium leading-6 text-gray-600">
+              {{ 'email' | translate }}
+            </label>
+            <input
+              appEmailValidator
+              formControlName="emailAddress"
+              type="text"
+              placeholder="{{ 'emailPlaceholder' | translate }}"
+              class="block w-full h-10 rounded-md border-0 py-1.5 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+              [class]="
+                formControls['emailAddress'].touched && formControls['emailAddress'].errors
+                  ? 'form-control invalid-feedback'
+                  : 'form-control'
+              "
+            />
+            <app-error-message [control]="formControls['emailAddress']" fieldName="Email"></app-error-message>
+          </div>
+          <div class="w-full">
+            <label for="first-name" class="block text-sm font-medium leading-6 text-gray-600">
+              {{ 'phoneNumber' | translate }}</label
+            >
+            <input
+              appAllowNumber
+              appPhoneValidator
+              maxlength="10"
+              formControlName="phoneNumber"
+              type="text"
+              placeholder="{{ 'phoneNumberPlaceholder' | translate }}"
+              class="block w-full h-10 rounded-md border-0 py-1.5 text-gray-600 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+              [class]="
+                formControls['phoneNumber'].touched && formControls['phoneNumber'].errors
+                  ? 'form-control invalid-feedback'
+                  : 'form-control'
+              "
+            />
+            <app-error-message [length]="10" [control]="formControls['phoneNumber']" fieldName="Phone Number">
+            </app-error-message>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col items-center w-full mt-6 shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:mt-0 md:w-1/2 md:ml-7"
+      >
+        <div class="flex items-center w-full px-4 py-4 bg-white border-b border-gray-200 rounded-t-lg sm:px-3">
+          <div class="bg-sky-100 p-1 mr-3.5 rounded-full">
+            <div class="p-1 bg-sky-200 rounded-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4 text-primary"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                />
+              </svg>
+            </div>
+          </div>
+          <p class="text-base font-semibold leading-6 text-gray-600">{{ 'jurisdictionDetails' | translate }}</p>
+        </div>
+        <div class="w-full px-4 py-6 flex flex-col space-y-3">
+          <div class="w-full">
+            <label for="first-name" class="block text-sm font-medium leading-6 text-gray-600">{{
+              'jurisdiction' | translate
+            }}</label>
+            <ng-select
+              formControlName="jurisdiction"
+              placeholder="{{ 'selectJurisdictionPlaceholder' | translate }}"
+              [items]="jurOptions"
+              bindLabel="name"
+              bindValue="value"
+              [appendTo]="'body'"
+              (change)="receiveJurisdiction($event)"
+              [class]="
+                formControls['jurisdiction'].touched && formControls['jurisdiction'].errors
+                  ? 'form-control invalid-feedback'
+                  : 'form-control'
+              "
+            ></ng-select>
+            <app-error-message [control]="formControls['jurisdiction']" fieldName="Juridisction"> </app-error-message>
+          </div>
+          <app-location
+            [disableField]="false"
+            [limit]="limit"
+            (selectedLocation)="receiveLocation($event)"
+            [selectedProvince]="selectedProvince"
+            [selectedDistrict]="selectedDistrict"
+            [selectedSector]="selectedSector"
+            [selectedCell]="selectedCell"
+            [selectedVillage]="selectedVillage"
+          >
+          </app-location>
+        </div>
+      </div>
+    </div>
+    <div class="mt-8 border-b border-gray-200 mb-9"></div>
+    <div class="flex w-full flex-col mt-y" *ngIf="households && households.length > 0">
+      <div class="flow-root">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5">
+              <table #tableRef class="min-w-full divide-y divide-gray-300">
+                <thead class="bg-white">
+                  <tr>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">#</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                      {{ 'householdCode' | translate }}
+                    </th>
+
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                      {{ 'lodaCode' | translate }}
+                    </th>
+
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'size' | translate }}
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'householdHead' | translate }}
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'documentNumber' | translate }}
+                    </th>
+
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {{ 'status' | translate }}
+                    </th>
+                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                      <span class="sr-only"></span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <ng-container *ngFor="let item of households; let i = index">
+                    <tr class="cursor-pointer">
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        <input
+                          class="w-4 cursor-pointer h-4 text-primary border-gray-300 rounded focus:ring-0"
+                          type="checkbox"
+                          [value]="item?.id"
+                          [checked]="selectedhouseholdIds[item?.id] === i"
+                          (change)="onHouseholdChange(item, i)"
+                        />
+                      </td>
+                      <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">{{ item?.code }}</td>
+                      <td class="py-6 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">{{ item?.lodaCode }}</td>
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ item.size }}</td>
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        {{ item.head.firstName + ' ' + item.head.lastName }}
+                      </td>
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        {{ item.head.documentNumber }}
+                      </td>
+
+                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        <ng-container *ngIf="item.status === EState.ACTIVE">
+                          <div class="inline-flex justify-center items-center bg-green-100 py-0.5 px-2 rounded-2xl">
+                            <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+                            <span class="text-xs font-medium text-green-600">{{ 'statusActive' | translate }}</span>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="item.status === EState.INACTIVE">
+                          <div class="inline-flex justify-center items-center bg-yellow-100 py-0.5 px-2 rounded-2xl">
+                            <span class="w-1.5 h-1.5 bg-yellow-600 rounded-full mr-1.5"></span>
+                            <span class="text-xs font-medium text-yellow-600">{{ 'statusInactive' | translate }}</span>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="item.status === EState.DELETED">
+                          <div class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl">
+                            <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+                            <span class="text-xs font-medium text-red-600">{{ 'statusDeleted' | translate }}</span>
+                          </div>
+                        </ng-container>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="households.length > 0">
+        <mat-paginator
+          [length]="totalHouseholds"
+          [pageIndex]="pagination.page"
+          [pageSize]="pagination.size"
+          (page)="onPageChange($event)"
+          aria-label="select"
+        >
+        </mat-paginator>
+      </ng-container>
+    </div>
+    <div class="flex justify-end">
+      <button
+        class="px-4 py-2.5 rounded-lg bg-primary text-white flex items-center justify-center font-semibold text-sm h-10"
+        [disabled]="userFormGroup.invalid"
+      >
+        {{ isUpdating ? ('loading' | translate) : ('updateButton' | translate) }}
+      </button>
+    </div>
+  </form>
+</div>

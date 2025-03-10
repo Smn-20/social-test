@@ -1,0 +1,457 @@
+<div class="w-full sm:block">
+  <nav class="flex flex-col lg:flex-row justify-space w-full" aria-label="Tabs">
+    <div class="flex w-full space-x-4">
+      <button
+        *ngFor="let tabItem of tabsHeaders; let i = index"
+        class="flex items-center space-x-3 rounded-md text-gray-500 px-3 py-2 text-sm font-medium"
+        [ngClass]="{ 'bg-sky-100': i === tabSelector, 'text-primary': i === tabSelector }"
+        (click)="selectTab(i)"
+      >
+        <span>{{ tabItem.text | translate }}</span>
+        <span *ngIf="tabItem.count" class="bg-sky-200 flex justify-center items-center rounded-full w-6 h-6">{{
+          tabItem.count
+        }}</span>
+      </button>
+    </div>
+
+    <div
+      class="flex flex-row space-x-6 mt-4 lg:mt-0"
+      *ngIf="
+        household?.status !== EState.DELETED &&
+        household?.status !== EState.ARCHIVED &&
+        (selectedLocation && this.loggedInUser?.locationId === selectedLocation?.selectedVillage ||
+        this.loggedInUser?.locationId === selectedLocation?.selectedCell)"
+    >
+      <button
+        [matTooltip]="'matTooltipAddNewHouseholdMember' | translate"
+        appAccessControl
+        [permissions]="[EPermission.CREATE_MEMBER]"
+        (click)="$event.stopPropagation(); onClickEvent('create-member')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="#475467"
+          class="w-6 h-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"
+          />
+        </svg>
+      </button>
+
+      <button
+        [matTooltip]="'matTooltipTransferHousehold' | translate"
+        appAccessControl
+        [permissions]="[EPermission.TRANSFER_HOUSE_HOLD]"
+        (click)="$event.stopPropagation(); onClickEvent('transfer-household')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="#475467"
+          class="w-6 h-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+          />
+        </svg>
+      </button>
+    </div>
+  </nav>
+</div>
+<div class="mt-10 w-full">
+  <div *ngIf="tabSelector === 0" class="flex space-x-8 justify-between">
+    <div class="w-2/6">
+      <app-user-info
+        [user]="head"
+        [photo]="headphoto"
+        (additionalEvent)="fetchHouseholdAnswers()"
+        [additionLinkConfig]="{ name: 'surveyAnswers', iconName: 'file-text', permissions: [EPermission.VIEW_ANSWERS] }"
+        [iconLoading]="householdAnswersLoading"
+      ></app-user-info>
+    </div>
+
+    <div class="flex flex-col w-2/6 space-y-6">
+      <app-jurisdiction
+        [title]="'householdLocation'"
+        [locationConfig]="{ type: EJurisdiction.VILLAGE, id: household.villageId }"
+        (locationEvent)="setLocation($event)"
+        [isCompact]="true"
+      ></app-jurisdiction>
+    </div>
+    <div class="flex flex-col w-3/6 space-y-6">
+      <div class="text-lg font-medium">{{ 'transferHistory' | translate }}</div>
+      <div class="border-b border-gray-200"></div>
+
+      <ng-container *ngIf="transfers && transfers.length > 0">
+        <div *ngFor="let transfer of transfers">
+          <app-track-by
+            [iconName]="'home'"
+            [titles]="['requestedBy', 'approvedBy', 'from', 'to']"
+            [items]="[
+              {
+                name: transfer.createdBy.firstName + ' ' + transfer.createdBy.lastName,
+                date: transfer.createdAt
+              },
+              {
+                name: transfer.updatedBy.firstName + ' ' + transfer.updatedBy.lastName,
+                date: transfer.updatedAt
+              },
+              {
+                location: transfer.previousVillage
+              },
+              {
+                location: transfer.requestedVillage
+              }
+            ]"
+          ></app-track-by>
+        </div>
+      </ng-container>
+
+      <div class="px-4 py-4 flex flex-col" *ngIf="transferLoading">
+        <div class="flex">
+          <p class="leading-relaxed mb-3 w-24 h-6 animate-pulse bg-gray-100"></p>
+        </div>
+        <div class="flex gap-2">
+          <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+          <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+          <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+          <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+        </div>
+        <div class="flex gap-2">
+          <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+          <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+          <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+          <p class="leading-relaxed mb-3 w-12 h-3 animate-pulse bg-gray-100"></p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4" *ngIf="!transferLoading && transfers && transfers.length === 0">
+        <app-not-found [showButton]="false" [showMessage]="false"></app-not-found>
+      </div>
+    </div>
+  </div>
+  <table
+    appAccessControl
+    [permissions]="[EPermission.VIEW_MEMBER]"
+    *ngIf="tabSelector === 1"
+    class="min-w-full divide-y divide-gray-300 mt-10"
+  >
+    <ng-container *ngIf="members && members.length > 0">
+      <thead class="bg-white">
+        <tr>
+          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900"></th>
+          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+            {{ 'names' | translate }}
+          </th>
+          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+            {{ 'documentNumber' | translate }}
+          </th>
+          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+            {{ 'selectedMembership' | translate }}
+          </th>
+          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+            {{ 'gender' | translate }}
+          </th>
+          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+            {{ 'maritalStatus' | translate }}
+          </th>
+          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{ 'DoB' | translate }}</th>
+          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+            {{ 'memberCode' | translate }}
+          </th>
+          <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+            <span class="sr-only"></span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <ng-container *ngFor="let user of members; let j = index">
+          <tr class="cursor-pointer">
+            <td class="py-4 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+              <img
+                *ngIf="user?.photo"
+                class="inline-block h-10 w-10 rounded-full"
+                [src]="getImage(user.photo)"
+                alt=""
+              />
+              <div *ngIf="!user?.photo" class="flex items-center justify-center h-10 w-10 rounded-full bg-gray-100">
+                <i-feather name="user" class="w-4 h-4"></i-feather>
+              </div>
+            </td>
+            <td class="px-3 py-4 text-sm text-gray-600 whitespace-nowrap">
+              <span class="block mb-1">{{ user.firstName + ' ' + user.lastName + '' }}</span>
+            </td>
+            <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+              <ng-container *ngIf="user.documentNumber">
+                {{
+                  user?.identificationType === 'NATIONAL_ID'
+                    ? 'NID'
+                    : user?.identificationType === 'CHILD_ID'
+                    ? 'APP-NO'
+                    : user?.identificationType
+                }}
+                /
+                {{ user.documentNumber }}
+              </ng-container>
+              <ng-container *ngIf="!user.documentNumber"> {{ 'notApplicable' | translate }} </ng-container>
+            </td>
+            <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+              {{ user.membershipType | lowercase | translate | titlecase }}
+            </td>
+            <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+              <ng-container *ngIf="user.gender">{{ user.gender | lowercase | translate | titlecase }}</ng-container>
+              <ng-container *ngIf="!user.gender">{{ 'notApplicable' | translate }}</ng-container>
+            </td>
+            <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+              <ng-container *ngIf="user.civilStatus">{{
+                user.civilStatus | lowercase | translate | titlecase
+              }}</ng-container>
+              <ng-container *ngIf="!user.civilStatus">{{ 'notApplicable' | translate }}</ng-container>
+            </td>
+            <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ user.dateOfBirth | date }}</td>
+            <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ user.memberCode ? user.memberCode : '--N/A--' }}</td>
+            <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+              <div class="flex flex-row space-x-4">
+                <div
+                  appAccessControl
+                  [permissions]="[EPermission.VIEW_ANSWERS]"
+                  (click)="fetchHouseholdMemberAnswers(user.id, j)"
+                  class="cursor-pointer flex items-center space-x-2 text-sm font-medium text-primary"
+                >
+                  <i-feather name="file-text" class="h-5 w-5"> </i-feather>
+                  <span>{{ 'surveyAnswers' | translate }}</span>
+                  <ng-container *ngIf="memberAnswersLoading === j">
+                    <ng-container [ngTemplateOutlet]="spinner2"> </ng-container>
+                  </ng-container>
+                </div>
+                <div
+                  appAccessControl
+                  [permissions]="[EPermission.UPDATE_QUESTIONNAIRE]"
+                  (click)="emitUpdateDemographics(user)"
+                  class="cursor-pointer flex items-center space-x-2 text-sm font-medium text-gray-500"
+                >
+                  <i-feather
+                    [matTooltip]="'textEditDemographDetails' | translate"
+                    name="edit-2"
+                    class="w-4 h-4 cursor-pointer"
+                  ></i-feather>
+                </div>
+                <i-feather
+                  appAccessControl
+                  [permissions]="[EPermission.DELETE_MEMBER]"
+                  (click)="openCreateMemberDialog(user, 'delete')"
+                  name="trash-2"
+                  class="w-4 h-4 pointer-cursor"
+                ></i-feather>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </ng-container>
+    <ng-container *ngIf="members.length === 0">
+      <div class="w-full flex justify-center items-center">
+        <div class="w-1/2">
+          <app-not-found [showButton]="false"></app-not-found>
+        </div>
+      </div>
+    </ng-container>
+  </table>
+  <table *ngIf="tabSelector === 2" class="min-w-full divide-y divide-gray-300 mt-10">
+    <ng-container *ngIf="appeals && appeals.length > 0">
+      <thead class="bg-white">
+        <tr>
+          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Option</th>
+          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">description</th>
+          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Submitted date</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <ng-container *ngFor="let appeal of appeals; let i = index">
+          <tr class="cursor-pointer">
+            <td class="py-4 pl-4 pr-3 text-sm text-gray-500 whitespace-nowrap">
+              {{ appeal.option | removeUnderscore | titlecase }}
+            </td>
+            <td class="px-3 py-4 text-sm text-gray-600 whitespace-nowrap">
+              {{ appeal.description | titlecase }}
+            </td>
+            <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+              <ng-container *ngIf="appeal.appealStatus === 'APPROVED'">
+                <div class="inline-flex justify-center items-center bg-green-100 py-0.5 px-2 rounded-2xl">
+                  <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+                  <span class="text-xs font-medium text-green-600">{{ 'approved' | translate }}</span>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="appeal.appealStatus === 'SUBMITTED'">
+                <div class="inline-flex justify-center items-center bg-yellow-100 py-0.5 px-2 rounded-2xl">
+                  <span class="w-1.5 h-1.5 bg-yellow-600 rounded-full mr-1.5"></span>
+                  <span class="text-xs font-medium text-yellow-600">{{ 'pending' | translate }}</span>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="appeal.appealStatus === 'CANCELLED'">
+                <div class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl">
+                  <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+                  <span class="text-xs font-medium text-red-600">{{ 'cancelled' | translate }}</span>
+                </div>
+              </ng-container>
+            </td>
+            <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ appeal.createdAt | date }}</td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </ng-container>
+    <ng-container *ngIf="appeals.length === 0">
+      <div class="w-full flex justify-center items-center">
+        <div class="w-1/2">
+          <app-not-found [showButton]="false"></app-not-found>
+        </div>
+      </div>
+    </ng-container>
+  </table>
+<ng-container *ngIf="(selectedLocation && this.loggedInUser?.locationId === selectedLocation?.selectedVillage ||
+  this.loggedInUser?.locationId === selectedLocation?.selectedCell)">
+  <div class="mt-8 border-b border-gray-200 mb-9"></div>
+  <div class="flex justify-end" *ngIf="household?.status !== EState.DELETED && household?.status !== EState.ARCHIVED">
+    <ng-container
+      *ngIf="household?.status === EState.INACTIVE"
+      appAccessControl
+      [permissions]="[EPermission.ENABLE_HOUSE_HOLD]"
+    >
+      <button
+        class="px-4 py-2.5 rounded-lg bg-primary text-white flex items-center justify-center font-semibold text-sm mr-8 h-10"
+        (click)="action('enable')"
+      >
+        {{ 'enable' | translate }}
+      </button>
+    </ng-container>
+    <button
+      appAccessControl
+      [permissions]="[EPermission.DELETE_HOUSE_HOLD]"
+      class="px-4 py-2.5 text-white rounded-lg bg-red-400 flex items-center justify-center font-semibold text-sm h-10"
+      (click)="action('delete')"
+    >
+      {{ 'delete' | translate }}
+    </button>
+  </div>
+
+  <div class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true" *ngIf="openConfirmModal">
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+      <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div
+          class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:p-6 space-y-10"
+        >
+          <div>
+            <div class="absolute top-0 right-0 pt-4 pr-4 sm:block">
+              <button
+                type="button"
+                class="text-gray-400 bg-white rounded-md hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                (click)="close()"
+              >
+                <span class="sr-only">Close</span>
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="text-gray-600 text-lg">
+            {{
+              ('confirmActionTextPart1' | translate) +
+                ' ' +
+                (confirmAction | translate) +
+                ' ' +
+                ('confirmActionTextPart2' | translate)
+            }}
+            ?
+          </div>
+          <div class="flex justify-end space-x-6">
+            <button
+              class="px-4 py-2.5 rounded-lg bg-white text-gray-600 border border-gray-300 flex items-center justify-center font-semibold text-sm h-10"
+              (click)="close()"
+            >
+              {{ 'cancelButton' | translate }}
+            </button>
+            <button
+              [disabled]="actionLoading"
+              class="px-4 w-auto py-2.5 rounded-lg bg-primary text-white flex items-center justify-center font-semibold text-sm h-10"
+              (click)="triggerAction()"
+            >
+              <ng-container *ngIf="actionLoading">
+                <ng-container [ngTemplateOutlet]="spinner"> </ng-container>
+              </ng-container>
+              <ng-container *ngIf="confirmAction === 'enable'">
+                {{ actionLoading ? ('enabling' | translate) : ('enable' | translate) }}
+              </ng-container>
+              <ng-container *ngIf="confirmAction === 'disable'">
+                {{ actionLoading ? ('disabling' | translate) : ('disable' | translate) }}
+              </ng-container>
+              <ng-container *ngIf="confirmAction === 'delete'">
+                {{ actionLoading ? ('deleting' | translate) : ('delete' | translate) }}
+              </ng-container>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+</div>
+
+<ng-template #spinner>
+  <svg
+    aria-hidden="true"
+    role="status"
+    class="inline w-4 h-4 mr-3 text-white animate-spin"
+    viewBox="0 0 100 101"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+      fill="#E5E7EB"
+    ></path>
+    <path
+      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+      fill="currentColor"
+    ></path>
+  </svg>
+</ng-template>
+
+<ng-template #spinner2>
+  <svg
+    aria-hidden="true"
+    role="status"
+    class="inline w-5 h-5 ml-3 text-primary animate-spin"
+    viewBox="0 0 100 101"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+      fill="#E5E7EB"
+    ></path>
+    <path
+      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+      fill="currentColor"
+    ></path>
+  </svg>
+</ng-template>

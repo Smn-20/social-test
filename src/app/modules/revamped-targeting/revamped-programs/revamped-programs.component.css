@@ -1,0 +1,11 @@
+.para-ellipse {
+    /* display: -webkit-box; */
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.description-custom-tooltip .mdc-tooltip__surface {
+    max-width: 500px !important;
+}

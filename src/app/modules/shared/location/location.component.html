@@ -1,0 +1,120 @@
+<div class="flex flex-col space-y-6">
+  <div class="flex flex-col w-full space-y-3 md:space-y-0 md:lg:flex-row md:gap-4">
+    <ng-container *ngIf="showProvince">
+      <div class="w-full md:lg:w-1/2">
+        <label for="province" class="block text-sm font-medium leading-6 text-gray-600">{{'province' | translate}}</label>
+        <ng-select
+          class="border-gray-200"
+          [disabled]="
+            (disableField ? _d[limit] <= _d['PROVINCE'] : false) ||
+            (disablePreselectedField && selectedProvince && _d[disableLimit] <= _d['PROVINCE'])
+          "
+          (change)="onProvinceChange($event)"
+          placeholder="{{'selectProvincePlaceholder' | translate}}"
+          [(ngModel)]="selectedProvince"
+          [ngModelOptions]="{ updateOn: 'blur' }"
+          [items]="provinces"
+          bindLabel="name"
+          bindValue="id"
+          [appendTo]="'body'"
+          class="border-gray-200"
+          [class]="validationTriggered && !selectedProvince ? 'form-control invalid-feedback' : 'form-control'"
+        >
+        </ng-select>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="showDistrict && districts.length > 0">
+      <div class="w-full md:lg:w-1/2"> 
+        <label for="district" class="block text-sm font-medium leading-6 text-gray-600">{{'district' | translate}}</label>
+        <ng-select
+          [disabled]="
+            (disableField ? _d[limit] <= _d['DISTRICT'] : false) ||
+            (disablePreselectedField && selectedDistrict && _d[disableLimit] <= _d['DISTRICT'])
+          "
+          (change)="onDistrictChange($event)"
+          placeholder="{{'selectDistrictPlaceholder' | translate}}"
+          [(ngModel)]="selectedDistrict"
+          [ngModelOptions]="{ updateOn: 'blur' }"
+          [items]="districts"
+          bindLabel="name"
+          [appendTo]="'body'"
+          bindValue="id"
+          class="border-gray-200"
+          [class]="validationTriggered && !selectedDistrict ? 'form-control invalid-feedback' : 'form-control'"
+        >
+        </ng-select>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="flex flex-col w-full space-y-3 md:space-y-0 md:lg:flex-row md:space-x-4">
+    <ng-container *ngIf="showSector && sectors.length > 0">
+      <div class="w-full md:lg:w-1/2">
+        <label for="sector" class="block text-sm font-medium leading-6 text-gray-600">{{'sector' | translate}}</label>
+        <ng-select
+          [disabled]="
+            (disableField ? _d[limit] <= _d['SECTOR'] : false) ||
+            (disablePreselectedField && selectedSector && _d[disableLimit] <= _d['SECTOR'])
+          "
+          (change)="onSectorChange($event)"
+          placeholder="{{'selectSectorPlaceholder' | translate}}"
+          [(ngModel)]="selectedSector"
+          [ngModelOptions]="{ updateOn: 'blur' }"
+          [items]="sectors"
+          [appendTo]="'body'"
+          bindLabel="name"
+          bindValue="id"
+          [class]="validationTriggered && !selectedSector ? 'form-control invalid-feedback' : 'form-control'"
+        >
+        </ng-select>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="showCell && cells.length > 0">
+      <div class="w-full md:lg:w-1/2">
+        <label for="cell" class="block text-sm font-medium leading-6 text-gray-600">{{'cell' | translate}}</label>
+        <ng-select
+          [disabled]="
+            (disableField ? _d[limit] <= _d['CELL'] : false) ||
+            (disablePreselectedField && selectedCell && _d[disableLimit] <= _d['CELL'])
+          "
+          (change)="onCellChange($event)"
+          placeholder="{{'selectCellPlaceholder' | translate}}"
+          [(ngModel)]="selectedCell"
+          [ngModelOptions]="{ updateOn: 'blur' }"
+          [items]="cells"
+          bindLabel="name"
+          [appendTo]="'body'"
+          bindValue="id"
+          [class]="validationTriggered && !selectedCell ? 'form-control invalid-feedback' : 'form-control'"
+        >
+        </ng-select>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="flex flex-col w-full space-y-3 md:space-y-0 md:lg:flex-row md:space-x-4">
+    <ng-container *ngIf="showVillage && villages.length > 0">
+      <div class="w-full md:lg:w-1/2">
+        <label for="village" class="block text-sm font-medium leading-6 text-gray-600">{{'village' | translate}}</label>
+        <ng-select
+          [disabled]="
+            (disableField ? _d[limit] <= _d['VILLAGE'] : false) ||
+            (disablePreselectedField && selectedVillage && _d[disableLimit] <= _d['VILLAGE'])
+          "
+          (change)="onVillageChange($event)"
+          placeholder="{{'selectVillagePlaceholder' | translate}}"
+          [(ngModel)]="selectedVillage"
+          [ngModelOptions]="{ updateOn: 'blur' }"
+          [items]="villages"
+          bindLabel="name"
+          [appendTo]="'body'"
+          bindValue="id"
+          [class]="validationTriggered && !selectedVillage ? 'form-control invalid-feedback' : 'form-control'"
+        >
+        </ng-select>
+      </div>
+    </ng-container>
+  </div>
+</div>

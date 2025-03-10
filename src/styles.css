@@ -1,0 +1,290 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@200;300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
+@import '~@ng-select/ng-select/themes/default.theme.css';
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+/* START SCROLLBAR STYLES */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 16px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 100vh;
+  background: #edf2f7;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 100vh;
+  border: 3px solid #edf2f7;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+/* END SCROLLBAR STYLES */
+
+/* START INPUT STYLES */
+.form-control {
+  @apply h-10 border-gray-600 rounded placeholder-green-900 placeholder-opacity-75;
+}
+
+.invalid-feedback {
+  @apply border border-red-500;
+}
+
+.w-inherit {
+  width: inherit;
+}
+/* END INPUT STYLES */
+
+/* START NG-SELECT STYLES */
+.ng-select.ng-select-single .ng-select-container {
+  @apply h-10;
+}
+
+.ng-select.ng-select-single .ng-select-container {
+  @apply border-gray-600 rounded;
+}
+
+.ng-dropdown-panel {
+  @apply border-gray-600 shadow-none;
+}
+
+.ng-select .ng-select-container .ng-value-container .ng-placeholder {
+  color: #607d8b;
+  opacity: 0.75;
+}
+
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+  @apply text-green-900 text-sm;
+}
+
+.ng-select.ng-select-focused:not(.ng-select-opened)>.ng-select-container {
+  /* border-color: red;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 0 3px rgba(0,126,255,0.1); */
+  @apply ring-2 ring-inset
+}
+/* END NG-SELECT STYLES */
+
+/* START BUTTON STYLES */
+.btn {
+  @apply h-10 rounded text-white font-medium hover:opacity-75;
+}
+
+.btn:disabled,
+button[disabled] {
+  @apply opacity-75 pointer-events-none cursor-not-allowed;
+}
+
+.btn-green {
+  @apply bg-green-700;
+}
+/* END BUTTON STYLES */
+
+/* START CHECKBOXES STYLES */
+.form-checkbox {
+  @apply mr-2 rounded border-gray-600 focus:ring-0 focus:shadow-none;
+  width: 18px;
+  height: 18px;
+}
+/* END CHECKBOXES STYLES */
+
+/* START AUTH INPUTS STYLES */
+.auth-input {
+  color: #667085;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+  border: 1px solid #d0d5dd;
+}
+
+.auth-input .error {
+  @apply border border-red-500 !important;
+}
+
+.auth-input:focus {
+  border-color: #7f56d9;
+}
+
+/* END AUTH INPUTS STYLES */
+
+.text-primary {
+  color: #058ccc;
+}
+
+.ng-select.ng-select-single .ng-select-container {
+  @apply border-gray-300;
+}
+
+.invalid-feedback .ng-select-container {
+  @apply border-red-500 border-0 border-b !important;
+}
+
+.ng-dropdown-panel {
+  @apply border-gray-300;
+}
+
+/* SNACKBAR STYLES */
+.mdc-snackbar__surface {
+  @apply bg-white border border-gray-200 rounded-xl !important;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  box-shadow: none !important;
+  @apply shadow-md max-w-[400px] h-auto !important;
+}
+
+.green-snackbar .mdc-snackbar__label {
+  @apply bg-white rounded-l-xl text-green-500 !important;
+}
+
+.red-snackbar .mdc-snackbar__label {
+  @apply bg-white rounded-l-xl text-red-500 !important;
+}
+
+.mdc-button__label {
+  @apply text-gray-500 !important;
+}
+
+/* SNACKBAR STYLES */
+
+/* .green-snackbar {
+  background: white;
+  color: rgb(65, 252, 134);
+}
+.green-snackbar button {
+  background-color: white;
+  color: rgb(65, 252, 134);
+  border: none;
+}
+.red-snackbar {
+  background: white !important;
+  color: #f44336;
+}
+.red-snackbar button {
+  background-color: white;
+  color: #f44336 !important;
+  border: none;
+} */
+
+
+
+.input-wrapper .search-by .ng-select.ng-select-single .ng-select-container, .search-by .ng-select-container.ng-has-value  {
+  height: 44px;
+  border-right: none;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.input-wrapper .search-by input {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: none;
+}
+
+
+.chart-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0;
+}
+
+.chart {
+  flex-grow: 1;
+}
+
+.legends {
+  width: 80px;
+}
+
+.mat-accordion .mat-expansion-panel:last-of-type {
+  border-bottom-right-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.mat-accordion .mat-expansion-panel:first-of-type {
+  border-top-right-radius: 0 !important;
+  border-top-left-radius: 0 !important;
+}
+
+.mat-mdc-standard-chip.mat-primary.mat-mdc-chip-selected {
+  background: #058ccc !important;
+}
+
+.menu-item {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.menu-content {
+  left: 72px;
+}
+
+
+.menu-content,
+.menu-content-children {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  color: #5B5959;
+  background-color: #fff;
+  border-radius: 8px;
+  width: 200px;
+  left: 78px;
+  transition: visibility 0s, opacity 0.2s ease;
+}
+.menu-content {
+  height: 72px;
+}
+.menu-content-children {
+    width: 200px;
+    height: var(--top);
+    top: 0;
+    bottom: 0;
+}
+
+.menu-content:before {
+  content: "";
+  position: absolute;
+  top: 30%;
+  right: 100%;
+  margin-top: -5px;
+  border-width: 20px;
+  border-style: solid;
+  border-color: transparent transparent transparent #fff;
+  transform: rotate(180deg); /* Rotate the arrow */
+}
+
+.menu-content-children:before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  right: 100%;
+  margin-top: -5px;
+  border-width: 20px;
+  border-style: solid;
+  border-color: transparent transparent transparent #fff;
+  transform: rotate(180deg); /* Rotate the arrow */
+}
+
+.menu-item .menu-content, .menu-item .menu-content-children {
+  visibility: visible;
+  opacity: 1;
+}

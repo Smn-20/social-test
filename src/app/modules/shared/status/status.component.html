@@ -1,0 +1,113 @@
+<ng-container *ngIf="status === EState.ACTIVE">
+  <div class="inline-flex justify-center items-center bg-green-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-green-600">{{ 'statusActive' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container *ngIf="status === EState.INACTIVE || status === EState.ARCHIVED">
+  <div class="inline-flex justify-center items-center bg-yellow-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-yellow-600 rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-yellow-600">{{ 'statusInactive' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container *ngIf="status === EState.DELETED">
+  <div class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-red-600">{{ 'statusDeleted' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container *ngIf="status === EState.CREATED">
+  <div class="inline-flex justify-center items-center bg-blue-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-primary rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-primary">{{ 'statusCreated' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container *ngIf="status === ETargetingStatus.FINISHED">
+  <div class="inline-flex justify-center items-center bg-green-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-green-600">{{ 'progressCompleted' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container
+  *ngIf="
+    status === ETargetingStatus.PENDING || status === EAction.TRANSFER_REQUESTED || status === EAction.ARCHIVE_REQUESTED
+  "
+>
+  <div class="inline-flex justify-center items-center bg-yellow-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-yellow-600 rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-yellow-600">{{ 'progressPending' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container *ngIf="status === ETargetingStatus.FAILED">
+  <div class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-red-600">{{ 'progressFailed' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container *ngIf="status === ETargetingStatus.RUNNING">
+  <div class="inline-flex w-[86px] h-[20px] relative bg-blue-100 rounded-2xl">
+    <div
+      class="flex bg-blue-300 items-center py-0.5 px-2"
+      [ngClass]="{
+        'rounded-tl-2xl rounded-bl-2xl': progressStatus < 99.99,
+        'rounded-2xl': progressStatus > 92
+      }"
+      [style.width.%]="toFixed(progressStatus)"
+    >
+      <span class="w-1.5 h-1.5 bg-primary rounded-full"></span>
+    </div>
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+      <span class="text-xs font-medium text-primary"
+        >{{ progressStatus > 99.8 ? 99.9 : toFixed(progressStatus) }}%</span
+      >
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngIf="status === ETargetingStatus.NOT_STARTED">
+  <div class="inline-flex justify-center items-center bg-sky-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-primary rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-primary">{{ 'progressNotStarted' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container
+  *ngIf="
+    status === EOtherStatus.APPROVED || status === EAction.TRANSFER_APPROVED || status === EAction.ARCHIVE_APPROVED
+  "
+>
+  <div class="inline-flex justify-center items-center bg-green-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-green-600">{{ 'approved' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container
+  *ngIf="status === EOtherStatus.CANCELLED || status === EAction.TRANSFER_DENIED || status === EAction.ARCHIVE_DENIED"
+>
+  <div class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-red-600">{{ 'cancelled' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container *ngIf="status === EOtherStatus.LOCKED">
+  <div class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-red-600">{{ 'statusLocked' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container *ngIf="status === EBeneficiaryHelpStatus.HELPED">
+  <div class="inline-flex justify-center items-center bg-green-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-green-600 rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-green-600">{{ 'helped' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container *ngIf="status === EBeneficiaryHelpStatus.MIXED">
+  <div class="inline-flex justify-center items-center bg-sky-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-primary rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-primary">{{ 'mixed' | translate }}</span>
+  </div>
+</ng-container>
+<ng-container *ngIf="status === EBeneficiaryHelpStatus.NOT_HELPED">
+  <div class="inline-flex justify-center items-center bg-red-100 py-0.5 px-2 rounded-2xl">
+    <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span>
+    <span class="text-xs font-medium text-red-600">{{ 'notHelped' | translate }}</span>
+  </div>
+</ng-container>
