@@ -14,7 +14,7 @@ module.exports = {
       },
       colors: {
         primary: {
-          DEFAULT: '#058ccc',
+          DEFAULT: '#588157',
         },
         'notification-red': '#FF0000',
         'gray-lang': '#5B5959',
