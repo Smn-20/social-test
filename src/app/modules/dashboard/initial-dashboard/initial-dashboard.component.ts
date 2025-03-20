@@ -678,7 +678,7 @@ export class InitialDashboardComponent implements OnInit {
             return `Ingo zitishoboye ugendeye ku hantu: ${number}`;
         }
         if (currentLanguage === 'fr') {
-            return `Foyers vulnérables par location: ${number}`;
+            return `Famílias vulneráveis ​​por aluguel: ${number}`;
         }
 
         return `Vulnerable Households per location: ${number}`;
@@ -689,7 +689,7 @@ export class InitialDashboardComponent implements OnInit {
             return "Abayobozi b'ingo ugendeye Ku gitsina";
         }
         if (currentLanguage === 'fr') {
-            return 'Chefs de foyer par sexe';
+            return 'Chefes de família por gênero';
         }
 
         return 'Household Heads By Gender';
@@ -700,7 +700,7 @@ export class InitialDashboardComponent implements OnInit {
             return `Abaturage : ${number}`;
         }
         if (currentLanguage === 'fr') {
-            return `Toute la population : ${number} personnes`;
+            return `Toda a população : ${number} personnes`;
         }
 
         return `Total Population : ${number} people`;
@@ -711,10 +711,10 @@ export class InitialDashboardComponent implements OnInit {
             return 'Ingo ugendeye kuri gahunda';
         }
         if (currentLanguage === 'fr') {
-            return 'Foyers par programme';
+            return 'Casas por programa';
         }
 
-        return 'Hoseholds by program';
+        return 'Households by program';
     }
 
     setTitleDash5(currentLanguage: string) {
@@ -722,7 +722,7 @@ export class InitialDashboardComponent implements OnInit {
             return 'Abaturage ugendeye ku gitsina';
         }
         if (currentLanguage === 'fr') {
-            return 'Population par Sexe';
+            return 'População por sexo';
         }
 
         return 'Population By Gender';
@@ -733,7 +733,7 @@ export class InitialDashboardComponent implements OnInit {
             return "Ababana n'ubumuga";
         }
         if (currentLanguage === 'fr') {
-            return 'Personnes handicapées';
+            return 'Pessoas com deficiência';
         }
 
         return 'People with disabilities';

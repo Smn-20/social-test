@@ -16,7 +16,7 @@ export class AuthInterceptor implements HttpInterceptor {
                     'Content-Type': 'application/json; charset=utf-8',
                     Accept: 'application/json',
                     Authorization: `Bearer ${token}`,
-                    'accept-Language': this.translationService.getCurrentLanguage() || 'rw',
+                    'accept-Language': this.translationService.getCurrentLanguage() === 'fr' ? 'en' : (this.translationService.getCurrentLanguage() || 'rw'),
                 },
             });
         }
