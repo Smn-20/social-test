@@ -112,8 +112,8 @@ export class InstitutionsComponent implements OnInit {
         this.dataService.getInstitutions(queryText, this.pagination).subscribe((res: any) => {
             this.loading = false;
             this.querying = false;
-            this.institutionsArr = res.response.content;
-            this.totalInstitutions = res.response.totalElements;
+            this.institutionsArr = res.response.content.filter((institution:any)=>institution.name === "LODA");
+            this.totalInstitutions = 1;
             this.pagination.page = res.response.number;
         });
     }

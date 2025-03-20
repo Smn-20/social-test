@@ -3,7 +3,7 @@
   "component": {
     "interviewees2": ["Uhagarariye Urugo", "Ugize Urugo", "Bombi", "Icyo ari cyo cyose"],
     "genders": ["Umugabo", "Umugore"],
-    "languages": ["English", "Français", "Ikinyarwanda"],
+    "languages": ["English", "Portuguese", "Ikinyarwanda"],
     "messages": {
       "userIdNotFound": "Ntago byabonetse, Numero y'irangamuntu irapfuye",
       "someFieldsAreMissing": "Hari ibyo mutujuje mw'iforoma",

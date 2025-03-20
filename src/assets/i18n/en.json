@@ -3,7 +3,7 @@
   "component": {
     "interviewees2": ["Household head", "Household member", "Both", "Any"],
     "genders": ["Male", "Female"],
-    "languages": ["English", "Français", "Ikinyarwanda"],
+    "languages": ["English", "Portuguese", "Ikinyarwanda"],
     "messages": {
       "userIdNotFound": "Not found, Invalid document number",
       "someFieldsAreMissing": "Some fields are missing",

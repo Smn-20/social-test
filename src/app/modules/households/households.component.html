@@ -242,9 +242,9 @@
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       {{ 'householdHead' | translate }}
                     </th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <!-- <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       {{ 'documentNumber' | translate }}
-                    </th>
+                    </th> -->
                     <th
                       *ngIf="activeProgram?.programId"
                       scope="col"
@@ -279,7 +279,7 @@
                       <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
                         {{ item.head.firstName + ' ' + item.head.lastName }}
                       </td>
-                      <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ item.head.documentNumber }}</td>
+                      <!-- <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{ item.head.documentNumber }}</td> -->
 
                       <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap" *ngIf="activeProgram?.programId">
                         {{ item.targetGroup }}
